@@ -34,7 +34,6 @@ const CreateNotePage = () => {
   const {
     control,
     handleSubmit,
-    getValues,
     formState: { isSubmitting },
   } = useForm<FormData>({
     resolver: yupResolver(formSchema),
@@ -55,73 +54,96 @@ const CreateNotePage = () => {
       ...data,
       createdAt: data.createdAt.toISOString(),
     });
+
+    control._reset({
+      title: '',
+      content: '',
+      createdAt: new Date(),
+    });
+
     console.log(data);
     console.log(mockPost);
   };
 
   return (
-    <div className='w-3xl border p-4'>
-      {/* Tiêu đề */}
-      <div className='border'>
-        <Controller
-          name='title'
-          render={({ field, fieldState }) => {
-            return (
-              <div>
-                <input
-                  {...field}
-                  type='text'
-                  placeholder='Tiêu đề'
-                  className='w-full'
-                />
-                {fieldState.error && (
-                  <p className='text-sm text-red-500'>
-                    {fieldState.error.message}
-                  </p>
-                )}
-              </div>
-            );
-          }}
-        />
-      </div>
+    <div className='mt-24 flex min-h-screen flex-col items-center'>
+      <div className='text-center text-4xl'>Tạo ghi chú mới</div>
 
-      {/* Nội dung */}
-      <div className='mt-2 border'>
-        <Controller
-          name='content'
-          render={({ field, fieldState }) => {
-            return (
-              <div>
-                <textarea
-                  {...field}
-                  placeholder='Nội dung'
-                  rows={5}
-                  className='w-full'
-                />
-                {fieldState.error && (
-                  <p className='text-sm text-red-500'>
-                    {fieldState.error.message}
-                  </p>
-                )}
-              </div>
-            );
-          }}
-        />
-      </div>
+      {/* Form tạo ghi chú */}
+      <div className='mt-4 w-3xl rounded-2xl border p-4'>
+        {/* Tiêu đề */}
+        <div>
+          <Controller
+            control={control}
+            name='title'
+            render={({ field, fieldState }) => {
+              return (
+                <div>
+                  <input
+                    {...field}
+                    type='text'
+                    placeholder='Tiêu đề'
+                    className='w-full rounded-lg border p-2'
+                  />
+                  {fieldState.error && (
+                    <p className='text-sm text-red-500'>
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </div>
+              );
+            }}
+          />
+        </div>
 
-      {/* Các nút  */}
-      <div className='mt-2 flex justify-evenly gap-2'>
-        <button
-          className='grow-1 cursor-pointer rounded-sm bg-gray-500 p-2'
-          type='button'
-          onClick={handleSubmit(onSubmit)}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Đang lưu' : 'Lưus'}
-        </button>
-        <button className='grow-1 cursor-pointer rounded-sm bg-amber-500'>
-          Hủy
-        </button>
+        {/* Nội dung */}
+        <div className='mt-2'>
+          <Controller
+            control={control}
+            name='content'
+            render={({ field, fieldState }) => {
+              return (
+                <div>
+                  <textarea
+                    {...field}
+                    placeholder='Nội dung'
+                    rows={10}
+                    className='w-full rounded-lg border px-2'
+                  />
+                  {fieldState.error && (
+                    <p className='text-sm text-red-500'>
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </div>
+              );
+            }}
+          />
+        </div>
+
+        {/* Các nút action */}
+        <div className='mt-2 flex justify-evenly gap-2'>
+          <button
+            className='grow-1 cursor-pointer rounded-sm bg-green-600 p-2 font-semibold text-white'
+            type='button'
+            onClick={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Đang lưu' : 'Lưu'}
+          </button>
+          <button
+            className='grow-1 cursor-pointer rounded-sm bg-red-500 font-semibold text-white'
+            type='button'
+            onClick={() => {
+              control._reset({
+                title: '',
+                content: '',
+              });
+            }}
+          >
+            Hủy
+          </button>
+        </div>
       </div>
     </div>
   );
