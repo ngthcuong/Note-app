@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [notes, setNotes] = useState(mockPost);
 
-  const hanleViewNote = (id: string) => {
+  const handleViewNote = (id: string) => {
     console.log(id);
   };
 
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
 
       {/* Danh sách ghi chú */}
       <div className='mt-3 h-[calc(100vh-12rem)] overflow-y-auto'>
-        {notes.length == 0 && (
+        {notes.length === 0 && (
           <div className='text-center text-xl'>
             Hiện không có ghi chú nào. Hãy tạo mới để hiển thị.
           </div>
@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
               <NoteCard
                 {...item}
                 key={item.id}
-                viewNote={() => hanleViewNote(item.id)}
+                viewNote={() => handleViewNote(item.id)}
                 deleteNote={() => handleDeleteNote(item.id)}
               />
             );

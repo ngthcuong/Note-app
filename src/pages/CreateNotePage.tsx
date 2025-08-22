@@ -60,6 +60,7 @@ const CreateNotePage = () => {
       title: '',
       content: '',
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     alert('Tạo một ghi chú mới thành công!');
