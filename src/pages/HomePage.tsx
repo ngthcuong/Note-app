@@ -25,12 +25,12 @@ const HomePage: React.FC = () => {
   return (
     <div className='m-auto mt-4 max-w-7xl rounded-2xl border p-4'>
       {/* Tiêu đề */}
-      <div className='text-center text-3xl font-extrabold'>
+      <div className='text-center text-xl font-extrabold sm:text-3xl'>
         Danh sách các ghi chú
       </div>
 
       {/* Phần điều khiển */}
-      <div className='mt-2 flex justify-between'>
+      <div className='mt-2 flex flex-col justify-between gap-2 sm:flex-row'>
         {/* Chọn kiểu hiển thị các ghi chú: theo hàng hoặc theo bảng */}
         <div className='flex items-center'>
           <div className='font-medium'>Sắp xếp theo dạng:</div>
