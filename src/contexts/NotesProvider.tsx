@@ -47,6 +47,7 @@ const NotesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const deleteNote = (id: string) => {
     setNotes(prev => prev.filter(note => note.id !== id));
+    console.log(notes);
   };
 
   const getNoteById = (id: string) => {

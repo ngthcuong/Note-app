@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { mockPost } from '../assets/mockPost';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { Note } from '../interfaces/Note';
+import { useNotes } from '../contexts/NotesProvider';
 
 interface FormData {
   id?: string;
@@ -17,8 +16,7 @@ interface FormData {
 const ViewNotePage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [notes, setNotes] = useState(mockPost);
-  const [foundNote, setFoundNote] = useState<Note | null>(null);
+  const { deleteNote, updateNote, getNoteById } = useNotes();
 
   useEffect(() => {
     if (!id) {
@@ -27,22 +25,14 @@ const ViewNotePage: React.FC = () => {
       return;
     }
 
-    try {
-      const note = notes.find(item => item.id === id);
-
-      if (note) {
-        setFoundNote(note);
-        reset({
-          title: note.title,
-          content: note.content,
-          createdAt: note.createdAt,
-          updatedAt: note.updatedAt,
-        });
-      } else {
-        alert('Ghi chú không tồn tại');
-      }
-    } catch (error) {
-      console.log(error);
+    const note = getNoteById(id!);
+    if (note) {
+      reset({
+        title: note?.title,
+        content: note?.content,
+        createdAt: note?.createdAt,
+        updatedAt: note?.updatedAt,
+      });
     }
   }, [id]);
 
@@ -76,44 +66,25 @@ const ViewNotePage: React.FC = () => {
   });
 
   const onSubmit = (formData: FormData) => {
-    if (!id || !foundNote) return;
+    if (!id) return;
 
-    const noteIndex = notes.findIndex(item => item.id === id);
-    console.log(noteIndex);
+    updateNote(id!, formData);
 
-    if (noteIndex !== -1) {
-      notes[noteIndex] = {
-        ...formData,
-        id: id ?? '',
-        updatedAt: new Date(),
-      };
-      setNotes([...notes]);
+    control._reset({
+      title: '',
+      content: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-      control._reset({
-        title: '',
-        content: '',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-
-      alert('Cập nhật ghi chú thành công!');
-      navigate('/');
-    } else {
-      alert('Không tìm thấy ghi chú!');
-    }
+    alert('Cập nhật ghi chú thành công!');
+    navigate('/');
   };
 
   const handleDeleteNote = (id: string) => {
     if (!id) return;
-
-    const noteIndex = mockPost.findIndex(item => item.id === id);
-    if (noteIndex !== -1) {
-      mockPost.splice(noteIndex, 1);
-      alert('Xóa ghi chú thành công');
-      navigate('/');
-    } else {
-      alert('Không tìm thấy ghi chú');
-    }
+    deleteNote(id);
+    navigate('/');
   };
 
   return (

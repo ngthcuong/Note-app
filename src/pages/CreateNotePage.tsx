@@ -1,9 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { mockPost } from '../assets/mockPost';
 import type { Note } from '../interfaces/Note';
 import { useNavigate } from 'react-router-dom';
+import { useNotes } from '../contexts/NotesProvider';
 
 interface FormData {
   id?: string;
@@ -15,6 +15,8 @@ interface FormData {
 
 const CreateNotePage = () => {
   const navigate = useNavigate();
+
+  const { addNote } = useNotes();
 
   const formSchema = yup.object({
     title: yup
@@ -50,11 +52,7 @@ const CreateNotePage = () => {
       id: formData.id || crypto.randomUUID(),
     };
 
-    mockPost.push({
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    addNote(data);
 
     control._reset({
       title: '',
