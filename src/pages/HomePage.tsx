@@ -1,7 +1,8 @@
+import type React from 'react';
 import { mockPost } from '../assets/mockPost';
-import Note from '../components/Note';
+import NoteCard from '../components/NoteCard';
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   return (
     <div>
       {/* Tiêu đề */}
@@ -10,7 +11,7 @@ const HomePage = () => {
       {/* Danh sách ghi chú */}
       <div>
         {mockPost.map(item => {
-          return <Note {...item} />;
+          return <NoteCard {...item} key={item.id} />;
         })}
       </div>
     </div>
