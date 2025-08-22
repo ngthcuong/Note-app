@@ -13,7 +13,7 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: '/create-blog',
+    path: '/create-note',
     element: <CreateNotePage />,
   },
 ]);

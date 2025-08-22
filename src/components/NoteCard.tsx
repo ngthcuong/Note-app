@@ -16,7 +16,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
   deleteNote,
 }) => {
   return (
-    <div className='my-4 flex max-w-3xl justify-between rounded-lg border p-2'>
+    <div className='my-4 flex justify-between rounded-lg border p-2'>
       {/* Nội dung chính của ghi chú */}
       <div className='mr-4 flex-3'>
         <div className='border-b-1 border-gray-300 pb-0.5 pl-1 text-lg font-bold'>
