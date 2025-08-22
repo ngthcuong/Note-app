@@ -1,5 +1,6 @@
 import type React from 'react';
 import type { Note } from '../interfaces/Note';
+import { useNavigate } from 'react-router';
 
 interface NoteCardProps extends Note {
   viewNote: (id: string) => void;
@@ -15,6 +16,8 @@ const NoteCard: React.FC<NoteCardProps> = ({
   viewNote,
   deleteNote,
 }) => {
+  const navigate = useNavigate();
+
   // Giới hạn hiển thị nếu tiêu đề hoặc nội dung quá dài
   const maxLength = 100;
   const displayContent =

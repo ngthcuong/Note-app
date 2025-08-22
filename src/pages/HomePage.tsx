@@ -9,7 +9,7 @@ const HomePage: React.FC = () => {
   const [notes, setNotes] = useState(mockPost);
 
   const handleViewNote = (id: string) => {
-    console.log(id);
+    navigate(`/view-note/${id}`);
   };
 
   const handleDeleteNote = (id: string) => {
@@ -62,6 +62,7 @@ const HomePage: React.FC = () => {
           </div>
         )}
         {notes
+          .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
           .map(item => {
             return (
               <NoteCard
@@ -71,10 +72,7 @@ const HomePage: React.FC = () => {
                 deleteNote={() => handleDeleteNote(item.id)}
               />
             );
-          })
-          .sort(
-            (a, b) => b.props.updatedAt.getTime() - a.props.updatedAt.getTime()
-          )}
+          })}
       </div>
     </div>
   );
