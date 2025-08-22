@@ -27,7 +27,9 @@ const NoteCard: React.FC<NoteCardProps> = ({
           {content}
         </div>
 
-        <div className='mt-2 pl-1 text-sm'>Cập nhật lúc: {updatedAt}</div>
+        <div className='mt-2 pl-1 text-sm'>
+          Cập nhật lúc: {updatedAt.toLocaleDateString()}
+        </div>
       </div>
 
       {/* Các nút hành động */}

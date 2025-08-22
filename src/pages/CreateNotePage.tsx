@@ -2,22 +2,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { mockPost } from '../assets/mockPost';
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: Date;
-}
+import type { Note } from '../interfaces/Note';
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   id?: string;
   title: string;
   content: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const CreateNotePage = () => {
+  const navigate = useNavigate();
+
   const formSchema = yup.object({
     title: yup
       .string()
@@ -29,6 +27,7 @@ const CreateNotePage = () => {
       .min(1, 'Nội dung không được để trống')
       .required('Nội dung là bắt buộc'),
     createdAt: yup.date().default(() => new Date()),
+    updatedAt: yup.date().default(() => new Date()),
   });
 
   const {
@@ -41,6 +40,7 @@ const CreateNotePage = () => {
       title: '',
       content: '',
       createdAt: new Date(),
+      updatedAt: new Date(),
     },
   });
 
@@ -52,7 +52,8 @@ const CreateNotePage = () => {
 
     mockPost.push({
       ...data,
-      createdAt: data.createdAt.toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     control._reset({
@@ -61,8 +62,8 @@ const CreateNotePage = () => {
       createdAt: new Date(),
     });
 
-    console.log(data);
-    console.log(mockPost);
+    alert('Tạo một ghi chú mới thành công!');
+    navigate('/');
   };
 
   return (

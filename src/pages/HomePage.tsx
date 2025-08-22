@@ -59,16 +59,20 @@ const HomePage: React.FC = () => {
             Hiện không có ghi chú nào. Hãy tạo mới để hiển thị.
           </div>
         )}
-        {notes.map(item => {
-          return (
-            <NoteCard
-              {...item}
-              key={item.id}
-              viewNote={() => hanleViewNote(item.id)}
-              deleteNote={() => handleDeleteNote(item.id)}
-            />
-          );
-        })}
+        {notes
+          .map(item => {
+            return (
+              <NoteCard
+                {...item}
+                key={item.id}
+                viewNote={() => hanleViewNote(item.id)}
+                deleteNote={() => handleDeleteNote(item.id)}
+              />
+            );
+          })
+          .sort(
+            (a, b) => b.props.updatedAt.getTime() - a.props.updatedAt.getTime()
+          )}
       </div>
     </div>
   );
