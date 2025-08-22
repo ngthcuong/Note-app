@@ -3,7 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useNotes } from '../contexts/NotesProvider';
+import { useNotes } from '../contexts/NotesContext';
 
 interface FormData {
   id?: string;
@@ -17,24 +17,6 @@ const ViewNotePage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { deleteNote, updateNote, getNoteById } = useNotes();
-
-  useEffect(() => {
-    if (!id) {
-      alert('ID ghi chú không hợp lệ');
-      navigate('/');
-      return;
-    }
-
-    const note = getNoteById(id!);
-    if (note) {
-      reset({
-        title: note?.title,
-        content: note?.content,
-        createdAt: note?.createdAt,
-        updatedAt: note?.updatedAt,
-      });
-    }
-  }, [id]);
 
   const formSchema = yup.object({
     title: yup
@@ -65,12 +47,30 @@ const ViewNotePage: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    if (!id) {
+      alert('ID ghi chú không hợp lệ');
+      navigate('/');
+      return;
+    }
+
+    const note = getNoteById(id!);
+    if (note) {
+      reset({
+        title: note?.title,
+        content: note?.content,
+        createdAt: note?.createdAt,
+        updatedAt: note?.updatedAt,
+      });
+    }
+  }, [id, reset, getNoteById]);
+
   const onSubmit = (formData: FormData) => {
     if (!id) return;
 
-    updateNote(id!, formData);
+    updateNote(id, formData);
 
-    control._reset({
+    reset({
       title: '',
       content: '',
       createdAt: new Date(),
@@ -84,6 +84,7 @@ const ViewNotePage: React.FC = () => {
   const handleDeleteNote = (id: string) => {
     if (!id) return;
     deleteNote(id);
+    alert('Xóa ghi chú thành công');
     navigate('/');
   };
 

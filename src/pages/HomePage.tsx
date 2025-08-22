@@ -1,7 +1,7 @@
 import type React from 'react';
 import NoteCard from '../components/NoteCard';
 import { useNavigate } from 'react-router-dom';
-import { useNotes } from '../contexts/NotesProvider';
+import { useNotes } from '../contexts/NotesContext';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -75,7 +75,10 @@ const HomePage: React.FC = () => {
                 {...item}
                 key={item.id}
                 viewNote={() => handleViewNote(item.id)}
-                deleteNote={() => deleteNote(item.id)}
+                deleteNote={() => {
+                  deleteNote(item.id);
+                  alert('Xóa ghi chú thành công');
+                }}
               />
             );
           })}

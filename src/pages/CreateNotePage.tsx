@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import type { Note } from '../interfaces/Note';
 import { useNavigate } from 'react-router-dom';
-import { useNotes } from '../contexts/NotesProvider';
+import { useNotes } from '../contexts/NotesContext';
 
 interface FormData {
   id?: string;
