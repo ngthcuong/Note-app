@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [notes, setNotes] = useState(mockPost);
 
-  const hanleViewNote = (id: string) => {
+  const handleViewNote = (id: string) => {
     console.log(id);
   };
 
