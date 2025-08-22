@@ -66,11 +66,13 @@ const CreateNotePage = () => {
   };
 
   return (
-    <div className='mt-24 flex min-h-screen flex-col items-center'>
-      <div className='text-center text-4xl'>Tạo ghi chú mới</div>
+    <div className='mx-auto mt-12 flex min-h-screen w-full max-w-sm flex-col items-center px-4 sm:max-w-md sm:px-6 md:mt-16 md:max-w-lg md:px-8 lg:mt-24 lg:max-w-2xl lg:px-0'>
+      <div className='text-center text-2xl font-semibold sm:text-4xl'>
+        Tạo ghi chú mới
+      </div>
 
       {/* Form tạo ghi chú */}
-      <div className='mt-4 w-3xl rounded-2xl border p-4'>
+      <div className='mt-4 w-full rounded-2xl border p-4 shadow-2xl sm:max-w-md md:max-w-lg lg:max-w-2xl'>
         {/* Tiêu đề */}
         <div>
           <Controller
@@ -122,9 +124,9 @@ const CreateNotePage = () => {
         </div>
 
         {/* Các nút action */}
-        <div className='mt-2 flex justify-evenly gap-2'>
+        <div className='mt-2 flex flex-col justify-evenly gap-2 text-center sm:flex-row'>
           <button
-            className='grow-1 cursor-pointer rounded-sm bg-green-600 p-2 font-semibold text-white'
+            className='h-8 grow-1 cursor-pointer rounded-sm bg-green-600 p-2 font-semibold text-white sm:h-10'
             type='button'
             onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting}
@@ -132,7 +134,7 @@ const CreateNotePage = () => {
             {isSubmitting ? 'Đang lưu' : 'Lưu'}
           </button>
           <button
-            className='grow-1 cursor-pointer rounded-sm bg-red-500 font-semibold text-white'
+            className='h-8 grow-1 cursor-pointer rounded-sm bg-red-500 font-semibold text-white sm:h-10'
             type='button'
             onClick={() => {
               control._reset({
