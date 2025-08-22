@@ -1,8 +1,8 @@
+import React, { useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import type { Note } from '../interfaces/Note';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 
 interface FormData {
@@ -13,10 +13,10 @@ interface FormData {
   updatedAt: Date;
 }
 
-const CreateNotePage = () => {
+const ViewNotePage: React.FC = () => {
   const navigate = useNavigate();
-
-  const { addNote } = useNotes();
+  const { id } = useParams<{ id: string }>();
+  const { deleteNote, updateNote, getNoteById } = useNotes();
 
   const formSchema = yup.object({
     title: yup
@@ -35,6 +35,7 @@ const CreateNotePage = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { isSubmitting },
   } = useForm<FormData>({
     resolver: yupResolver(formSchema),
@@ -46,28 +47,50 @@ const CreateNotePage = () => {
     },
   });
 
+  useEffect(() => {
+    if (!id) {
+      alert('ID ghi chú không hợp lệ');
+      navigate('/');
+      return;
+    }
+
+    const note = getNoteById(id!);
+    if (note) {
+      reset({
+        title: note?.title,
+        content: note?.content,
+        createdAt: note?.createdAt,
+        updatedAt: note?.updatedAt,
+      });
+    }
+  }, [id, reset, getNoteById]);
+
   const onSubmit = (formData: FormData) => {
-    const data: Note = {
-      ...formData,
-      id: formData.id || crypto.randomUUID(),
-    };
+    if (!id) return;
 
-    addNote(data);
+    updateNote(id, formData);
 
-    control._reset({
+    reset({
       title: '',
       content: '',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
-    alert('Tạo một ghi chú mới thành công!');
+    alert('Cập nhật ghi chú thành công!');
+    navigate('/');
+  };
+
+  const handleDeleteNote = (id: string) => {
+    if (!id) return;
+    deleteNote(id);
+    alert('Xóa ghi chú thành công');
     navigate('/');
   };
 
   return (
     <div className='mt-24 flex min-h-screen flex-col items-center'>
-      <div className='text-center text-4xl'>Tạo ghi chú mới</div>
+      <div className='text-center text-4xl'>Chỉnh sửa ghi chú</div>
 
       {/* Form tạo ghi chú */}
       <div className='mt-4 w-3xl rounded-2xl border p-4'>
@@ -129,19 +152,14 @@ const CreateNotePage = () => {
             onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Đang lưu' : 'Lưu'}
+            {isSubmitting ? 'Đang cập nhật' : 'Cập nhật'}
           </button>
           <button
             className='grow-1 cursor-pointer rounded-sm bg-red-500 font-semibold text-white'
             type='button'
-            onClick={() => {
-              control._reset({
-                title: '',
-                content: '',
-              });
-            }}
+            onClick={() => handleDeleteNote(id || '')}
           >
-            Hủy
+            Xóa
           </button>
         </div>
       </div>
@@ -149,4 +167,4 @@ const CreateNotePage = () => {
   );
 };
 
-export default CreateNotePage;
+export default ViewNotePage;

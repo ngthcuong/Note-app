@@ -1,19 +1,25 @@
 import type React from 'react';
-import { mockPost } from '../assets/mockPost';
 import NoteCard from '../components/NoteCard';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useNotes } from '../contexts/NotesContext';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [notes, setNotes] = useState(mockPost);
+
+  /**
+   * Cách 1: Sử dụng context như bình thường
+   */
+  // const context = useContext(NotesContext);
+  // const notes = context?.notes || [];
+  // const deleteNote = context?.deleteNote || (() => {});
+
+  /**
+   * Cách 2: Sử dụng custom hook để gọi các hàm và biến
+   */
+  const { notes, deleteNote } = useNotes();
 
   const handleViewNote = (id: string) => {
-    console.log(id);
-  };
-
-  const handleDeleteNote = (id: string) => {
-    setNotes(prev => prev.filter(note => note.id !== id));
+    navigate(`/view-note/${id}`);
   };
 
   return (
@@ -62,19 +68,20 @@ const HomePage: React.FC = () => {
           </div>
         )}
         {notes
+          .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
           .map(item => {
             return (
               <NoteCard
                 {...item}
                 key={item.id}
                 viewNote={() => handleViewNote(item.id)}
-                deleteNote={() => handleDeleteNote(item.id)}
+                deleteNote={() => {
+                  deleteNote(item.id);
+                  alert('Xóa ghi chú thành công');
+                }}
               />
             );
-          })
-          .sort(
-            (a, b) => b.props.updatedAt.getTime() - a.props.updatedAt.getTime()
-          )}
+          })}
       </div>
     </div>
   );

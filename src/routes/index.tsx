@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
 import CreateNotePage from '../pages/CreateNotePage';
+import ViewNotePage from '../pages/ViewNotePage';
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path: '/create-note',
     element: <CreateNotePage />,
+  },
+  {
+    path: '/view-note/:id',
+    element: <ViewNotePage />,
   },
 ]);
 
