@@ -36,7 +36,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
           {displayContent}
         </div>
 
-        <div className='mt-2 pl-1 text-[12px] sm:text-sm'>
+        <div className='mt-2 pl-1 text-xs sm:text-sm'>
           Cập nhật lúc: {updatedAt.toLocaleDateString()}
         </div>
       </div>
