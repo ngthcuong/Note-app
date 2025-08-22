@@ -25,6 +25,7 @@ const HomePage: React.FC = () => {
 
       {/* Phần điều khiển */}
       <div className='mt-2 flex justify-between'>
+        {/* Chọn kiểu hiển thị các ghi chú: theo hàng hoặc theo bảng */}
         <div className='flex items-center'>
           <div className='font-medium'>Sắp xếp theo dạng:</div>
           <form className='ml-2 flex gap-2'>
@@ -44,6 +45,7 @@ const HomePage: React.FC = () => {
             </div>
           </form>
         </div>
+        {/* Nút thêm ghi chú mới */}
         <button
           className='cursor-pointer rounded-xl bg-green-600 px-2 py-1 font-semibold text-white'
           onClick={() => navigate('/create-note')}

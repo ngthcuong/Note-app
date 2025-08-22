@@ -15,16 +15,25 @@ const NoteCard: React.FC<NoteCardProps> = ({
   viewNote,
   deleteNote,
 }) => {
+  // Giới hạn hiển thị nếu tiêu đề hoặc nội dung quá dài
+  const maxLength = 100;
+  const displayContent =
+    content.length > maxLength
+      ? content.substring(0, maxLength) + '...'
+      : content;
+  const displayTitle =
+    title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
+
   return (
     <div className='my-4 flex justify-between rounded-lg border p-2'>
       {/* Nội dung chính của ghi chú */}
       <div className='mr-4 flex-3'>
         <div className='border-b-1 border-gray-300 pb-0.5 pl-1 text-lg font-bold'>
-          {title}
+          {displayTitle}
         </div>
 
         <div className='mt-2 border-b-1 border-gray-300 pb-0.5 pl-1 text-lg'>
-          {content}
+          {displayContent}
         </div>
 
         <div className='mt-2 pl-1 text-sm'>
