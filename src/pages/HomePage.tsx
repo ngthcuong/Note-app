@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
 
       {/* Danh sách ghi chú */}
       <div className='mt-3 h-[calc(100vh-12rem)] overflow-y-auto'>
-        {notes.length == 0 && (
+        {notes.length === 0 && (
           <div className='text-center text-xl'>
             Hiện không có ghi chú nào. Hãy tạo mới để hiển thị.
           </div>
