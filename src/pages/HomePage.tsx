@@ -49,7 +49,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     handleSearchNote(keyword);
-  }, [keyword]);
+  }, [keyword, notes]);
 
   return (
     <div className='m-auto mt-4 max-w-7xl rounded-2xl border p-4'>
@@ -119,6 +119,7 @@ const HomePage: React.FC = () => {
               <NoteCard
                 {...item}
                 key={item.id}
+                searchKeyword={keyword}
                 viewNote={() => handleViewNote(item.id)}
                 deleteNote={() => {
                   deleteNote(item.id);
