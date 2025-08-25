@@ -2,6 +2,8 @@ import type React from 'react';
 import NoteCard from '../components/NoteCard';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
+import { useEffect, useState } from 'react';
+import type { Note } from '../interfaces/Note';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -18,9 +20,36 @@ const HomePage: React.FC = () => {
    */
   const { notes, deleteNote } = useNotes();
 
+  const [keyword, setKeyword] = useState<string>('');
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
+
   const handleViewNote = (id: string) => {
     navigate(`/view-note/${id}`);
   };
+
+  const handleSearchNote = (keyword: string) => {
+    if (!keyword.trim()) {
+      setFilteredNotes(notes);
+    }
+
+    if (keyword.trim()) {
+      const foundNotes = notes.filter(note => {
+        const titleMatch = note.title
+          .toLowerCase()
+          .includes(keyword.toLowerCase());
+        const contentMatch = note.content
+          .toLowerCase()
+          .includes(keyword.toLowerCase());
+        return titleMatch || contentMatch;
+      });
+
+      setFilteredNotes(foundNotes);
+    }
+  };
+
+  useEffect(() => {
+    handleSearchNote(keyword);
+  }, [keyword, notes]);
 
   return (
     <div className='m-auto mt-4 max-w-7xl rounded-2xl border p-4'>
@@ -32,28 +61,39 @@ const HomePage: React.FC = () => {
       {/* Phần điều khiển */}
       <div className='mt-2 flex flex-col justify-between gap-2 sm:flex-row'>
         {/* Chọn kiểu hiển thị các ghi chú: theo hàng hoặc theo bảng */}
-        <div className='flex items-center'>
-          <div className='font-medium'>Sắp xếp theo dạng:</div>
-          <form className='ml-2 flex gap-2'>
-            <div className='flex items-center gap-1'>
-              <input
-                type='radio'
-                value='column'
-                id='column'
-                name='viewType'
-                defaultChecked
-              />
-              <label htmlFor='column'>Cột</label>
-            </div>
-            <div className='flex items-center gap-1'>
-              <input type='radio' value='grid' id='grid' name='viewType' />
-              <label htmlFor='grid'>Lưới</label>
-            </div>
-          </form>
+        <div className='flex flex-col'>
+          <div className='flex items-center'>
+            <div className='font-medium'>Sắp xếp theo dạng:</div>
+            <form className='ml-2 flex gap-2'>
+              <div className='flex items-center gap-1'>
+                <input
+                  type='radio'
+                  value='column'
+                  id='column'
+                  name='viewType'
+                  defaultChecked
+                />
+                <label htmlFor='column'>Cột</label>
+              </div>
+              <div className='flex items-center gap-1'>
+                <input type='radio' value='grid' id='grid' name='viewType' />
+                <label htmlFor='grid'>Lưới</label>
+              </div>
+            </form>
+          </div>
+          <div className='mt-2 flex items-center'>
+            <div className='font-semibold'>Tìm kiếm: </div>
+            <input
+              type='text'
+              className='ml-2 rounded-md border py-1 pl-1'
+              value={keyword}
+              onChange={e => setKeyword(e.target.value)}
+            />
+          </div>
         </div>
         {/* Nút thêm ghi chú mới */}
         <button
-          className='cursor-pointer rounded-xl bg-green-600 px-2 py-1 font-semibold text-white'
+          className='h-fit cursor-pointer rounded-xl bg-green-600 px-2 py-1 font-semibold text-white'
           onClick={() => navigate('/create-note')}
         >
           Tạo ghi chú mới
@@ -62,18 +102,24 @@ const HomePage: React.FC = () => {
 
       {/* Danh sách ghi chú */}
       <div className='mt-3 h-[calc(100vh-12rem)] overflow-y-auto'>
-        {notes.length === 0 && (
+        {filteredNotes.length === 0 && !keyword && (
           <div className='text-center text-xl'>
             Hiện không có ghi chú nào. Hãy tạo mới để hiển thị.
           </div>
         )}
-        {notes
+        {filteredNotes.length === 0 && keyword && (
+          <div className='text-center text-xl'>
+            Hiện không có ghi chú nào có từ khóa {keyword}
+          </div>
+        )}
+        {filteredNotes
           .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
           .map(item => {
             return (
               <NoteCard
                 {...item}
                 key={item.id}
+                searchKeyword={keyword}
                 viewNote={() => handleViewNote(item.id)}
                 deleteNote={() => {
                   deleteNote(item.id);

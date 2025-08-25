@@ -1,9 +1,11 @@
 import type React from 'react';
 import type { Note } from '../interfaces/Note';
+import HighlightText from './HighlightText';
 
 interface NoteCardProps extends Note {
   viewNote: (id: string) => void;
   deleteNote: (id: string) => void;
+  searchKeyword?: string;
 }
 
 // Destructuring
@@ -14,6 +16,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
   updatedAt,
   viewNote,
   deleteNote,
+  searchKeyword = '',
 }) => {
   // Giới hạn hiển thị nếu tiêu đề hoặc nội dung quá dài
   const maxLength = 100;
@@ -29,15 +32,17 @@ const NoteCard: React.FC<NoteCardProps> = ({
       {/* Nội dung chính của ghi chú */}
       <div className='mr-4 flex-3'>
         <div className='border-b-1 border-gray-300 pb-0.5 pl-1 font-bold sm:text-lg'>
-          {displayTitle}
+          {/* {displayTitle} */}
+          <HighlightText text={displayTitle} keyword={searchKeyword} />
         </div>
 
         <div className='mt-2 border-b-1 border-gray-300 pb-0.5 pl-1 text-base sm:text-lg'>
-          {displayContent}
+          {/* {displayContent} */}
+          <HighlightText text={displayContent} keyword={searchKeyword} />
         </div>
 
         <div className='mt-2 pl-1 text-xs sm:text-sm'>
-          Cập nhật lúc: {updatedAt.toLocaleDateString()}
+          Cập nhật lúc: {updatedAt.toLocaleDateString('vi-VN')}
         </div>
       </div>
 
