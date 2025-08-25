@@ -113,22 +113,32 @@ const HomePage: React.FC = () => {
       {/* Danh sách ghi chú */}
       <div
         className={classNames(
-          'mt-3 grid h-[calc(100vh-12rem)] gap-4 overflow-y-auto',
+          'mt-3 h-[calc(100vh-12rem)] gap-4 overflow-y-auto',
           {
-            '': layout === 'column',
-            'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4':
+            'flex flex-col': layout === 'column',
+            'grid auto-rows-max grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4':
               layout === 'grid',
           }
         )}
       >
         {filteredNotes.length === 0 && !keyword && (
-          <div className='text-center text-xl'>
-            Hiện không có ghi chú nào. Hãy tạo mới để hiển thị.
+          <div className='col-span-full flex h-full min-h-[300px] items-center justify-center text-center'>
+            <div className='text-lg text-gray-500 sm:text-xl'>
+              <div>Hiện không có ghi chú nào.</div>
+              <div className='mt-1 text-sm text-gray-400 sm:text-base'>
+                Hãy tạo mới để hiển thị.
+              </div>
+            </div>
           </div>
         )}
         {filteredNotes.length === 0 && keyword && (
-          <div className='text-center text-xl'>
-            Hiện không có ghi chú nào có từ khóa {keyword}
+          <div className='col-span-full flex h-full min-h-[300px] items-center justify-center text-center'>
+            <div className='text-lg text-gray-500 sm:text-xl'>
+              <div>Không tìm thấy ghi chú nào</div>
+              <div className='mt-1 text-sm text-gray-400 sm:text-base'>
+                chứa từ khóa "<span className='font-semibold'>{keyword}</span>"
+              </div>
+            </div>
           </div>
         )}
         {filteredNotes
@@ -143,7 +153,6 @@ const HomePage: React.FC = () => {
                 viewNote={() => handleViewNote(item.id)}
                 deleteNote={() => {
                   deleteNote(item.id);
-                  alert('Xóa ghi chú thành công');
                 }}
               />
             );

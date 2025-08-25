@@ -5,6 +5,8 @@ import type { Note } from '../interfaces/Note';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import Header from '../components/Header';
+import { useAppDispatch } from '../hooks';
+import { openSnackbar } from '../redux/slices/snackBarSlice';
 
 interface FormData {
   id?: string;
@@ -16,6 +18,7 @@ interface FormData {
 
 const CreateNotePage = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const { addNote } = useNotes();
 
@@ -55,6 +58,12 @@ const CreateNotePage = () => {
 
     addNote(data);
 
+    dispatch(
+      openSnackbar({
+        message: 'Đã tạo mới ghi chú thành công',
+      })
+    );
+
     control._reset({
       title: '',
       content: '',
@@ -62,7 +71,6 @@ const CreateNotePage = () => {
       updatedAt: new Date(),
     });
 
-    alert('Tạo một ghi chú mới thành công!');
     navigate('/');
   };
 

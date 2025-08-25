@@ -2,6 +2,8 @@ import type React from 'react';
 import type { Note } from '../interfaces/Note';
 import HighlightText from './HighlightText';
 import classNames from 'classnames';
+import { useAppDispatch } from '../hooks';
+import { openSnackbar } from '../redux/slices/snackBarSlice';
 
 interface NoteCardProps extends Note {
   viewNote: (id: string) => void;
@@ -21,6 +23,8 @@ const NoteCard: React.FC<NoteCardProps> = ({
   layout = 'column',
   searchKeyword = '',
 }) => {
+  const dispatch = useAppDispatch();
+
   // Giới hạn hiển thị nếu tiêu đề hoặc nội dung quá dài
   const maxLength = 100;
   const displayContent =
@@ -30,10 +34,29 @@ const NoteCard: React.FC<NoteCardProps> = ({
   const displayTitle =
     title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
 
+  const handleDeleteNote = (id: string) => {
+    try {
+      deleteNote(id);
+      dispatch(
+        openSnackbar({
+          message: 'Đã xóa ghi chú thành công',
+          severity: 'success',
+        })
+      );
+    } catch (error) {
+      dispatch(
+        openSnackbar({
+          message: 'Không thể xóa ghi chú này',
+          severity: 'error',
+        })
+      );
+    }
+  };
+
   return (
     <div
       className={classNames(
-        'flex h-fit flex-col justify-between rounded-lg border p-2 sm:flex-row',
+        'flex max-h-fit flex-col justify-between rounded-lg border p-2 sm:flex-row',
         {
           'md:flex-col': layout === 'grid',
           'md:flex-row': layout === 'column',
@@ -75,7 +98,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
         <button
           type='button'
           className='max-h-fit w-full grow-1 cursor-pointer rounded-lg bg-red-600 py-1 font-semibold text-white sm:py-1.5 lg:py-2'
-          onClick={() => deleteNote(id)}
+          onClick={() => handleDeleteNote(id)}
         >
           Xóa
         </button>
