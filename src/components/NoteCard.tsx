@@ -33,7 +33,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
   return (
     <div
       className={classNames(
-        'flex flex-col justify-between rounded-lg border p-2 sm:flex-row',
+        'flex h-fit flex-col justify-between rounded-lg border p-2 sm:flex-row',
         {
           'md:flex-col': layout === 'grid',
           'md:flex-row': layout === 'column',
