@@ -29,8 +29,9 @@ export const snackBarSlice = createSlice({
       state.message = action.payload.message;
       state.severity = action.payload.severity;
     },
-    closeSnackbar: () => {
-      return;
+    closeSnackbar: state => {
+      state.isOpen = false;
+      state.message = '';
     },
   },
 });

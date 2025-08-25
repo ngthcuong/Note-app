@@ -5,6 +5,8 @@ import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import Header from '../components/Header';
+import { useAppDispatch } from '../hooks';
+import { openSnackbar } from '../redux/slices/snackBarSlice';
 
 interface FormData {
   id?: string;
@@ -18,6 +20,7 @@ const ViewNotePage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { deleteNote, updateNote, getNoteById } = useNotes();
+  const dispatch = useAppDispatch();
 
   const formSchema = yup.object({
     title: yup
@@ -71,6 +74,12 @@ const ViewNotePage: React.FC = () => {
 
     updateNote(id, formData);
 
+    dispatch(
+      openSnackbar({
+        message: 'Đã cập nhật ghi chú thành công',
+      })
+    );
+
     reset({
       title: '',
       content: '',
@@ -78,14 +87,17 @@ const ViewNotePage: React.FC = () => {
       updatedAt: new Date(),
     });
 
-    alert('Cập nhật ghi chú thành công!');
     navigate('/');
   };
 
   const handleDeleteNote = (id: string) => {
     if (!id) return;
     deleteNote(id);
-    alert('Xóa ghi chú thành công');
+    dispatch(
+      openSnackbar({
+        message: 'Đã xóa ghi chú thành công',
+      })
+    );
     navigate('/');
   };
 
