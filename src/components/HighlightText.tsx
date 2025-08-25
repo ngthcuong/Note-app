@@ -17,7 +17,7 @@ const HighlightText: React.FC<HighlightTextProps> = ({
     }
 
     const lowerText = text.toLowerCase();
-    const lowerKeyword = text.toLowerCase();
+    const lowerKeyword = keyword.toLowerCase();
     const parts: React.ReactNode[] = [];
     let lastIntex = 0;
     let matchIndex = 0;
@@ -40,7 +40,7 @@ const HighlightText: React.FC<HighlightTextProps> = ({
       index = lowerText.indexOf(lowerKeyword, lastIntex);
     }
 
-    //   Them phan text con lai
+    // Them phan text con lai
     if (lastIntex < text.length) {
       parts.push(text.substring(lastIntex));
     }
