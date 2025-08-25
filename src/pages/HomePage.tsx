@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import { useEffect, useState } from 'react';
 import type { Note } from '../interfaces/Note';
+import classNames from 'classnames';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const HomePage: React.FC = () => {
 
   const [keyword, setKeyword] = useState<string>('');
   const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
+  const [layout, setLayout] = useState<string>('column');
+  console.log(layout);
 
   const handleViewNote = (id: string) => {
     navigate(`/view-note/${id}`);
@@ -72,11 +75,18 @@ const HomePage: React.FC = () => {
                   id='column'
                   name='viewType'
                   defaultChecked
+                  onClick={() => setLayout('column')}
                 />
                 <label htmlFor='column'>Cột</label>
               </div>
               <div className='flex items-center gap-1'>
-                <input type='radio' value='grid' id='grid' name='viewType' />
+                <input
+                  type='radio'
+                  value='grid'
+                  id='grid'
+                  name='viewType'
+                  onClick={() => setLayout('grid')}
+                />
                 <label htmlFor='grid'>Lưới</label>
               </div>
             </form>
@@ -101,7 +111,15 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Danh sách ghi chú */}
-      <div className='mt-3 h-[calc(100vh-12rem)] overflow-y-auto'>
+      <div
+        className={classNames(
+          'mt-3 grid h-[calc(100vh-12rem)] gap-4 overflow-y-auto',
+          {
+            '': layout === 'column',
+            'grid grid-cols-2': layout === 'grid',
+          }
+        )}
+      >
         {filteredNotes.length === 0 && !keyword && (
           <div className='text-center text-xl'>
             Hiện không có ghi chú nào. Hãy tạo mới để hiển thị.
@@ -120,6 +138,7 @@ const HomePage: React.FC = () => {
                 {...item}
                 key={item.id}
                 searchKeyword={keyword}
+                layout={layout}
                 viewNote={() => handleViewNote(item.id)}
                 deleteNote={() => {
                   deleteNote(item.id);

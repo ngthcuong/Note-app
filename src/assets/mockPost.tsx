@@ -73,4 +73,12 @@ export const mockPost: Note[] = [
     createdAt: new Date('2023-08-28'),
     updatedAt: new Date('2023-08-28'),
   },
+  {
+    id: '10',
+    title: 'API Integration',
+    content:
+      'Sử dụng Axios hoặc Fetch API. Implement error handling. Cached API calls với React Query. Handle loading và error states.',
+    createdAt: new Date('2023-08-28'),
+    updatedAt: new Date('2023-08-28'),
+  },
 ];

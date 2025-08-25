@@ -1,11 +1,13 @@
 import type React from 'react';
 import type { Note } from '../interfaces/Note';
 import HighlightText from './HighlightText';
+import classNames from 'classnames';
 
 interface NoteCardProps extends Note {
   viewNote: (id: string) => void;
   deleteNote: (id: string) => void;
   searchKeyword?: string;
+  layout?: string;
 }
 
 // Destructuring
@@ -16,6 +18,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
   updatedAt,
   viewNote,
   deleteNote,
+  layout = 'column',
   searchKeyword = '',
 }) => {
   // Giới hạn hiển thị nếu tiêu đề hoặc nội dung quá dài
@@ -28,7 +31,15 @@ const NoteCard: React.FC<NoteCardProps> = ({
     title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
 
   return (
-    <div className='my-4 flex flex-col justify-between rounded-lg border p-2 sm:flex-row'>
+    <div
+      className={classNames(
+        'flex flex-col justify-between rounded-lg border p-2 sm:flex-row',
+        {
+          'md:flex-col': layout === 'grid',
+          'md:flex-row': layout === 'column',
+        }
+      )}
+    >
       {/* Nội dung chính của ghi chú */}
       <div className='mr-4 flex-3'>
         <div className='border-b-1 border-gray-300 pb-0.5 pl-1 font-bold sm:text-lg'>
@@ -47,7 +58,13 @@ const NoteCard: React.FC<NoteCardProps> = ({
       </div>
 
       {/* Các nút hành động */}
-      <div className='mt-2 flex flex-1 flex-row items-center justify-center gap-2 sm:flex-col'>
+      <div
+        className={classNames('mt-2 flex gap-2', {
+          'flex-1 flex-row items-center justify-center sm:flex-col':
+            layout === 'column',
+          'flex-col sm:flex-col md:flex-col': layout === 'grid',
+        })}
+      >
         <button
           type='button'
           className='max-h-fit w-full grow-1 cursor-pointer rounded-lg bg-blue-500 py-0.5 font-semibold text-white sm:py-2'
