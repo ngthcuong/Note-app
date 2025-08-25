@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
+import Header from '../components/Header';
 
 interface FormData {
   id?: string;
@@ -90,9 +91,10 @@ const ViewNotePage: React.FC = () => {
 
   return (
     <div className='mx-auto mt-12 flex min-h-screen w-full max-w-sm flex-col items-center px-4 sm:max-w-md sm:px-6 md:mt-16 md:max-w-lg md:px-8 lg:mt-24 lg:max-w-2xl lg:px-0'>
-      <div className='text-center text-2xl font-semibold sm:text-4xl'>
+      <Header title='Chỉnh sửa ghi chú' />
+      {/* <div className='text-center text-2xl font-semibold sm:text-4xl'>
         Chỉnh sửa ghi chú
-      </div>
+      </div> */}
 
       {/* Form tạo ghi chú */}
       <div className='mt-4 w-full rounded-2xl border p-4 shadow-2xl sm:max-w-md md:max-w-lg lg:max-w-2xl'>
