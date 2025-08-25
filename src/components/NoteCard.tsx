@@ -67,14 +67,14 @@ const NoteCard: React.FC<NoteCardProps> = ({
       >
         <button
           type='button'
-          className='max-h-fit w-full grow-1 cursor-pointer rounded-lg bg-blue-500 py-0.5 font-semibold text-white sm:py-2'
+          className='max-h-fit w-full grow-1 cursor-pointer rounded-lg bg-blue-500 py-1 font-semibold text-white sm:py-1.5 lg:py-2'
           onClick={() => viewNote(id)}
         >
           Xem chi tiết
         </button>
         <button
           type='button'
-          className='max-h-fit w-full grow-1 cursor-pointer rounded-lg bg-red-600 py-0.5 font-semibold text-white sm:py-2'
+          className='max-h-fit w-full grow-1 cursor-pointer rounded-lg bg-red-600 py-1 font-semibold text-white sm:py-1.5 lg:py-2'
           onClick={() => deleteNote(id)}
         >
           Xóa

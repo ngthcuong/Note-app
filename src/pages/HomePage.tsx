@@ -24,7 +24,6 @@ const HomePage: React.FC = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
   const [layout, setLayout] = useState<string>('column');
-  console.log(layout);
 
   const handleViewNote = (id: string) => {
     navigate(`/view-note/${id}`);
@@ -55,7 +54,7 @@ const HomePage: React.FC = () => {
   }, [keyword, notes]);
 
   return (
-    <div className='m-auto mt-4 max-w-7xl rounded-2xl border p-4'>
+    <div className='m-auto mt-4 max-w-7xl rounded-2xl border p-2 sm:p-4 lg:p-6'>
       {/* Tiêu đề */}
       <div className='text-center text-xl font-extrabold sm:text-3xl'>
         Danh sách các ghi chú
@@ -95,15 +94,16 @@ const HomePage: React.FC = () => {
             <div className='font-semibold'>Tìm kiếm: </div>
             <input
               type='text'
-              className='ml-2 rounded-md border py-1 pl-1'
+              className='ml-2 w-fit rounded-md border py-1 pl-1 sm:w-64'
               value={keyword}
+              placeholder='Tìm kiếm ghi chú theo từ khóa ...'
               onChange={e => setKeyword(e.target.value)}
             />
           </div>
         </div>
         {/* Nút thêm ghi chú mới */}
         <button
-          className='h-fit cursor-pointer rounded-xl bg-green-600 px-2 py-1 font-semibold text-white'
+          className='h-fit cursor-pointer rounded-xl bg-green-600 px-3 py-2 text-sm font-semibold text-white sm:px-4 sm:py-2 sm:text-base'
           onClick={() => navigate('/create-note')}
         >
           Tạo ghi chú mới
@@ -116,7 +116,8 @@ const HomePage: React.FC = () => {
           'mt-3 grid h-[calc(100vh-12rem)] gap-4 overflow-y-auto',
           {
             '': layout === 'column',
-            'grid grid-cols-2': layout === 'grid',
+            'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4':
+              layout === 'grid',
           }
         )}
       >
