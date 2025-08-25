@@ -19,30 +19,30 @@ const HighlightText: React.FC<HighlightTextProps> = ({
     const lowerText = text.toLowerCase();
     const lowerKeyword = keyword.toLowerCase();
     const parts: React.ReactNode[] = [];
-    let lastIntex = 0;
+    let lastIndex = 0;
     let matchIndex = 0;
 
     let index = lowerText.indexOf(lowerKeyword);
     while (index !== -1) {
       // Them text truoc keyword
-      if (index > lastIntex) {
-        parts.push(text.substring(lastIntex, index));
+      if (index > lastIndex) {
+        parts.push(text.substring(lastIndex, index));
       }
 
-      // Them keyword duoc highligh
+      // Them keyword duoc highlight
       parts.push(
         <mark key={`highlight-${matchIndex}`} className='rounded bg-amber-300'>
           {text.substring(index, index + keyword.length)}
         </mark>
       );
 
-      lastIntex = index + keyword.length;
-      index = lowerText.indexOf(lowerKeyword, lastIntex);
+      lastIndex = index + keyword.length;
+      index = lowerText.indexOf(lowerKeyword, lastIndex);
     }
 
     // Them phan text con lai
-    if (lastIntex < text.length) {
-      parts.push(text.substring(lastIntex));
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
     }
 
     return parts;
