@@ -1,4 +1,5 @@
 import type { Note } from '../interfaces/Note';
+import type User from '../interfaces/User';
 
 export const mockPost: Note[] = [
   {
@@ -80,5 +81,13 @@ export const mockPost: Note[] = [
       'Sử dụng Axios hoặc Fetch API. Implement error handling. Cached API calls với React Query. Handle loading và error states.',
     createdAt: new Date('2023-08-28'),
     updatedAt: new Date('2023-08-28'),
+  },
+];
+
+export const mockUser: User[] = [
+  {
+    id: '1',
+    phone: '0373472803',
+    password: '123456a!A',
   },
 ];

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import type React from 'react';
 import type { Note } from '../interfaces/Note';
-import { mockPost } from '../assets/mockPost';
+import { mockPost } from '../assets/mockData';
 
 interface NotesContextType {
   notes: Note[];
