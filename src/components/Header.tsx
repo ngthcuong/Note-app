@@ -7,7 +7,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import CreateIcon from '@mui/icons-material/Create';
 import EditIcon from '@mui/icons-material/Edit';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
-import { Logout, PersonPinCircleOutlined } from '@mui/icons-material';
+import { Logout, Person, PersonPinCircleOutlined } from '@mui/icons-material';
 
 // Định nghĩa mapping cho các routes
 const routeMapping: Record<string, { label: string; icon?: React.ReactNode }> =
@@ -23,6 +23,10 @@ const routeMapping: Record<string, { label: string; icon?: React.ReactNode }> =
     '/notes': {
       label: 'Chỉnh sửa ghi chú',
       icon: <EditIcon sx={{ mr: 0.5 }} fontSize='inherit' />,
+    },
+    '/profile': {
+      label: 'Thông tin người dùng',
+      icon: <Person sx={{ mr: 0.5 }} fontSize='inherit' />,
     },
     '/login': { label: 'Đăng nhập' },
     '/register': { label: 'Đăng ký' },
