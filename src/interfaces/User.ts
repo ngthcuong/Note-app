@@ -5,4 +5,5 @@ export default interface User {
   fullName: string;
   dob: Date;
   email: string;
+  gender: string;
 }

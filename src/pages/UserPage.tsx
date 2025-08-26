@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import ModalChangePassword from '../components/ModalChangePassword';
 import { openSnackbar } from '../redux/slices/snackBarSlice';
+import { useAuth } from '../contexts/AuthContext';
 
 interface FormData {
   id?: string;
@@ -50,6 +51,8 @@ const gender = [
 
 const UserPage: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { user } = useAuth();
+
   const [isShowModal, setIsShowModal] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -95,11 +98,11 @@ const UserPage: React.FC = () => {
   } = useForm({
     resolver: yupResolver(formData),
     defaultValues: {
-      phone: '',
-      fullName: '',
-      email: '',
-      gender: '',
-      dob: undefined,
+      phone: user?.phone || '',
+      fullName: user?.fullName || '',
+      email: user?.email || '',
+      gender: user?.gender || '',
+      dob: user?.dob || new Date(),
     },
   });
 
@@ -181,7 +184,7 @@ const UserPage: React.FC = () => {
                   <div>
                     <TextField
                       {...field}
-                      type='tel'
+                      type='text'
                       placeholder='Nhập họ và tên của bạn'
                       label='Họ và tên'
                       className='w-full'
@@ -275,6 +278,8 @@ const UserPage: React.FC = () => {
                       disabled={!isEditing}
                       error={!!fieldState.error}
                       helperText={fieldState?.error?.message || ''}
+                      value={field.value}
+                      onChange={e => field.onChange(e.target.value)}
                       slotProps={{
                         input: {
                           startAdornment: (
