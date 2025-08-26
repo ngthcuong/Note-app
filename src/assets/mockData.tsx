@@ -89,5 +89,6 @@ export const mockUser: User[] = [
     id: '1',
     phone: '0373472803',
     password: '123456a!A',
+    fullName: 'Nguyen Thanh Cuong',
   },
 ];

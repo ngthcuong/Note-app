@@ -23,6 +23,9 @@ import {
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
+import * as authApi from '../services/authApi';
+import { useAppDispatch } from '../hooks';
+import { openSnackbar } from '../redux/slices/snackBarSlice';
 
 interface FormData {
   id?: string;
@@ -37,11 +40,15 @@ interface UserFormProps {
 
 const LoginPage: React.FC<UserFormProps> = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const dispatch = useAppDispatch();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const formData = yup.object({
-    phone: yup.string().required('Số điện thoại là bắt buộc'),
+    phone: yup
+      .string()
+      .matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/, 'Số điện thoại không hợp lệ')
+      .required('Số điện thoại là bắt buộc'),
     password: yup
       .string()
       .required('Mật khẩu là bắt buộc')
@@ -55,6 +62,8 @@ const LoginPage: React.FC<UserFormProps> = () => {
   const {
     control,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { isSubmitting },
   } = useForm({
     resolver: yupResolver(formData),
@@ -71,13 +80,38 @@ const LoginPage: React.FC<UserFormProps> = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.log(data);
+      clearErrors();
 
-      navigate('/');
+      const response = await authApi.login(data);
+      if (response?.success) {
+        navigate('/');
+      } else {
+        switch (response?.errorCode) {
+          case 'USER_NOT_FOUND':
+            setError('phone', {
+              type: 'value',
+              message: response.message,
+            });
+            break;
+          case 'WRONG_PASSWORD':
+            setError('password', {
+              type: 'value',
+              message: response.message,
+            });
+            break;
+          default:
+            break;
+        }
+      }
     } catch (error) {
       console.error('Login error:', error);
 
-      // Show specific error message if available
+      dispatch(
+        openSnackbar({
+          message: 'Lỗi kết nối. Vui lòng thử lại.',
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -138,6 +172,7 @@ const LoginPage: React.FC<UserFormProps> = () => {
                         ),
                       },
                     }}
+                    error={!!fieldState.error}
                   />
                   {fieldState.error && (
                     <Typography variant='caption' color='error'>
@@ -176,6 +211,7 @@ const LoginPage: React.FC<UserFormProps> = () => {
                         ),
                       },
                     }}
+                    error={!!fieldState.error}
                   />
                   {fieldState.error && (
                     <Typography variant='caption' color='error'>
