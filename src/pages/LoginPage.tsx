@@ -33,12 +33,7 @@ interface FormData {
   password: string;
 }
 
-interface UserFormProps {
-  userId?: string;
-  onLogin?: (user: { phone: string; password: string }) => void;
-}
-
-const LoginPage: React.FC<UserFormProps> = () => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
