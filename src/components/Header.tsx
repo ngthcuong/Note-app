@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home';
 import CreateIcon from '@mui/icons-material/Create';
 import EditIcon from '@mui/icons-material/Edit';
-import { Avatar, Box, IconButton, Menu, MenuItem, Modal } from '@mui/material';
+import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import { Logout, PersonPinCircleOutlined } from '@mui/icons-material';
 
 // Định nghĩa mapping cho các routes
@@ -112,7 +112,7 @@ export default function Header() {
   );
 
   return (
-    <div className='mb-8 flex w-full items-center justify-between'>
+    <div className='mx-auto mb-2 flex max-w-7xl items-center justify-between rounded-2xl border px-4'>
       <div>
         <Breadcrumbs aria-label='breadcrumb'>
           {breadcrumbs.map((breadcrumb, index) => {

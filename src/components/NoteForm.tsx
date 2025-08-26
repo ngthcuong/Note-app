@@ -101,8 +101,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onDelete }) => {
   };
 
   return (
-    <div className='mx-auto mt-8 flex w-full max-w-sm flex-col items-center px-4 sm:max-w-md sm:px-6 md:mt-16 md:max-w-lg md:px-8 lg:mt-24 lg:max-w-2xl lg:px-0'>
-      <Header />
+    <div className='mx-auto flex w-full max-w-sm flex-col items-center rounded-2xl border px-4 py-10 sm:max-w-md sm:px-6 md:max-w-lg md:px-8 lg:max-w-7xl lg:px-0'>
+      {/* <Header /> */}
 
       <Typography
         variant='h4'
