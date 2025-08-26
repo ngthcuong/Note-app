@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
@@ -6,7 +6,8 @@ import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home';
 import CreateIcon from '@mui/icons-material/Create';
 import EditIcon from '@mui/icons-material/Edit';
-import { Avatar, IconButton } from '@mui/material';
+import { Avatar, Box, IconButton, Menu, MenuItem, Modal } from '@mui/material';
+import { Logout, PersonPinCircleOutlined } from '@mui/icons-material';
 
 // Định nghĩa mapping cho các routes
 const routeMapping: Record<string, { label: string; icon?: React.ReactNode }> =
@@ -30,9 +31,12 @@ const routeMapping: Record<string, { label: string; icon?: React.ReactNode }> =
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  // const [openModal, setOpenModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   // Tạo breadcrumb items dựa trên current path
   const generateBreadcrumbs = () => {
+    // Chuyển url thành mảng dựa trên các '/'
     const pathnames = location.pathname.split('/').filter(x => x);
     const breadcrumbs = [];
 
@@ -41,7 +45,7 @@ export default function Header() {
       path: '/',
       label: 'Trang chủ',
       icon: <HomeIcon sx={{ mr: 0.5 }} fontSize='inherit' />,
-      isActive: location.pathname === '/',
+      isActive: location.pathname === '/', // Kiểm tra nếu đang ở Home
     });
 
     // Thêm các path con
@@ -73,11 +77,39 @@ export default function Header() {
   };
 
   const breadcrumbs = generateBreadcrumbs();
-  console.log(breadcrumbs);
 
   const handleBreadcrumbClick = (path: string) => {
     navigate(path);
   };
+
+  const menuSetting = (
+    <Menu
+      open={!!anchorEl}
+      anchorEl={anchorEl}
+      onClose={() => setAnchorEl(null)}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      <MenuItem onClick={() => navigate('/profile')}>
+        <PersonPinCircleOutlined sx={{ mr: 1 }} />
+        Thông tin cá nhân
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          navigate('/login');
+        }}
+      >
+        <Logout sx={{ mr: 1 }} />
+        Đăng xuất
+      </MenuItem>
+    </Menu>
+  );
 
   return (
     <div className='mb-8 flex w-full items-center justify-between'>
@@ -122,9 +154,10 @@ export default function Header() {
       </div>
 
       <div>
-        <IconButton onClick={() => alert('Profile menu')}>
+        <IconButton onClick={event => setAnchorEl(event.currentTarget)}>
           <Avatar />
         </IconButton>
+        {menuSetting}
       </div>
     </div>
   );
