@@ -1,44 +1,38 @@
-import { Button, Typography } from '@mui/material';
-import React from 'react';
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
+import HomeIcon from '@mui/icons-material/Home';
+import { Avatar, IconButton } from '@mui/material';
 
-interface HeaderProps {
-  title: string;
-}
-
-const Header: React.FC<HeaderProps> = ({ title }) => {
-  const navigate = useNavigate();
-
-  const goBack = () => {
-    navigate('/');
-  };
-
+export default function Header() {
   return (
-    <div className='flex w-full items-center'>
-      <Button
-        sx={{
-          textTransform: 'none',
-          color: 'black',
-          fontSize: 18,
-        }}
-        startIcon={<KeyboardBackspaceIcon />}
-        onClick={goBack}
-      >
-        Quay lại
-      </Button>
-      <Typography
-        variant='h4'
-        sx={{
-          fontWeight: 600,
-          textAlign: 'center',
-          flex: 1,
-        }}
-      >
-        {title}
-      </Typography>
+    <div className='mb-8 flex w-full items-center justify-between'>
+      <div>
+        <Breadcrumbs aria-label='breadcrumb'>
+          <Link
+            underline='hover'
+            sx={{ display: 'flex', alignItems: 'center', fontSize: 24 }}
+            color='inherit'
+            href='/'
+          >
+            <HomeIcon sx={{ mr: 0.5 }} fontSize='inherit' />
+            Trang chủ
+          </Link>
+          <Link
+            underline='hover'
+            sx={{ display: 'flex', alignItems: 'center', fontSize: 24 }}
+            color='inherit'
+            href='/create-note'
+          >
+            Tạo ghi chú mới
+          </Link>
+        </Breadcrumbs>
+      </div>
+
+      <div>
+        <IconButton onClick={() => alert('a')}>
+          <Avatar />
+        </IconButton>
+      </div>
     </div>
   );
-};
-
-export default Header;
+}
