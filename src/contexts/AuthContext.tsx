@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import type User from '../interfaces/User';
+import { mockUser } from '../assets/mockData';
 
 interface RegisterData {
   phone: string;
@@ -19,11 +20,20 @@ interface RegisterData {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (phone: string, password: string) => Promise<void>;
-  register: (userData: RegisterData) => Promise<void>;
+  login: (userData: {
+    phone: string;
+    password: string;
+  }) => Promise<ResponseLogin | undefined>;
+  register: (userData: RegisterData) => void;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
-  changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
+  changePassword: (oldPassword: string, newPassword: string) => void;
+}
+
+interface ResponseLogin {
+  success: boolean;
+  message?: string;
+  errorCode?: 'WRONG_PHONE' | 'WRONG_PASSWORD' | 'USER_NOT_FOUND';
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,15 +46,16 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const checkAuthStatus = () => {
       try {
         const storedUser = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
+        // const token = localStorage.getItem('token');
 
-        if (storedUser && token) {
+        if (storedUser) {
+          //  if (storedUser && token) {
           setUser(JSON.parse(storedUser));
         }
       } catch (error) {
         console.error('Error loading user from localStorage:', error);
         localStorage.removeItem('user');
-        localStorage.removeItem('token');
+        // localStorage.removeItem('token');
       }
     };
 
@@ -52,108 +63,50 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   // Đăng nhập
-  const login = async (phone: string, password: string): Promise<void> => {
+  const login = async (userData: {
+    phone: string;
+    password: string;
+  }): Promise<ResponseLogin | undefined> => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phone, password }),
-      });
+      const user = mockUser.find(user => user.phone === userData.phone);
+      if (user) {
+        const isCorrectPassword = user.password === userData.password;
+        if (isCorrectPassword) {
+          setUser(user);
+          localStorage.setItem('user', JSON.stringify(user));
 
-      if (!response.ok) {
-        throw new Error('Đăng nhập thất bại');
+          return {
+            success: true,
+            message: 'Đăng nhập thành công',
+          };
+        } else {
+          return {
+            success: false,
+            message: 'Mật khẩu không chính xác',
+            errorCode: 'WRONG_PASSWORD',
+          };
+        }
       }
-
-      const data = await response.json();
-
-      // Lưu user và token
-      setUser(data.user);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      localStorage.setItem('token', data.token);
+      return {
+        success: false,
+        message: 'Không tìm thấy tài khoản',
+        errorCode: 'USER_NOT_FOUND',
+      };
     } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      console.error(error);
     }
   };
 
   // Đăng ký
-  const register = async (userData: RegisterData): Promise<void> => {
-    try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Đăng ký thất bại');
-      }
-
-      const data = await response.json();
-
-      // Tự động đăng nhập sau khi đăng ký thành công
-      setUser(data.user);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      localStorage.setItem('token', data.token);
-    } catch (error) {
-      console.error('Register error:', error);
-      throw error;
-    }
-  };
+  const register = (userData: RegisterData): void => {};
 
   // Đăng xuất
-  const logout = (): void => {
-    setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-
-    fetch('/api/auth/logout', { method: 'POST' });
-  };
+  const logout = (): void => {};
 
   // Cập nhật thông tin user
-  const updateUser = (userData: Partial<User>): void => {
-    if (user) {
-      const updatedUser = { ...user, ...userData };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+  const updateUser = (userData: Partial<User>): void => {};
 
-      fetch('/api/user/update', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(userData),
-      });
-    }
-  };
-
-  const changePassword = async (
-    oldPassword: string,
-    newPassword: string
-  ): Promise<void> => {
-    try {
-      const response = await fetch('/api/auth/change-password', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ oldPassword, newPassword }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Đổi mật khẩu thất bại');
-      }
-    } catch (error) {
-      console.error('Change password error:', error);
-      throw error;
-    }
-  };
+  const changePassword = (oldPassword: string, newPassword: string): void => {};
 
   return (
     <AuthContext.Provider

@@ -6,12 +6,15 @@ import { NotesProvider } from './contexts/NotesContext.tsx';
 import { Provider } from 'react-redux';
 import { store } from './redux/store.ts';
 import SnackBar from './components/SnackBar.tsx';
+import { AuthProvider } from './contexts/AuthContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
-  <NotesProvider>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-      <SnackBar />
-    </Provider>
-  </NotesProvider>
+  <AuthProvider>
+    <NotesProvider>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+        <SnackBar />
+      </Provider>
+    </NotesProvider>
+  </AuthProvider>
 );

@@ -23,9 +23,9 @@ import {
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
-import * as authApi from '../services/authApi';
 import { useAppDispatch } from '../hooks';
 import { openSnackbar } from '../redux/slices/snackBarSlice';
+import { useAuth } from '../contexts/AuthContext';
 
 interface FormData {
   id?: string;
@@ -36,6 +36,7 @@ interface FormData {
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
@@ -77,7 +78,8 @@ const LoginPage: React.FC = () => {
     try {
       clearErrors();
 
-      const response = await authApi.login(data);
+      const response = await login(data);
+
       if (response?.success) {
         navigate('/');
       } else {
