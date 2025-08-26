@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
   const [layout, setLayout] = useState<string>('column');
 
   const handleViewNote = (id: string) => {
-    navigate(`/view-note/${id}`);
+    navigate(`/notes/${id}`);
   };
 
   const handleSearchNote = (keyword: string) => {
