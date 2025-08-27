@@ -134,7 +134,15 @@ const RegisterPage: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     try {
       clearErrors();
-      const response = await register(data);
+      const registerData = {
+        phone: data.phone,
+        fullName: data.fullName,
+        dob: data.dob,
+        email: data.email,
+        gender: data.gender,
+        password: data.password,
+      };
+      const response = await register(registerData);
 
       if (response?.success) {
         dispatch(

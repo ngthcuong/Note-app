@@ -10,6 +10,7 @@ import {
   Paper,
   Divider,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import {
   Visibility,
@@ -142,6 +143,11 @@ const LoginPage: React.FC = () => {
           component='form'
           onSubmit={handleSubmit(onSubmit)}
           className='flex flex-col gap-3'
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              handleSubmit(onSubmit)();
+            }
+          }}
         >
           <Box
             sx={{
@@ -257,7 +263,11 @@ const LoginPage: React.FC = () => {
               fontWeight: 600,
             }}
           >
-            {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {isSubmitting ? (
+              <CircularProgress size={30} className='!text-white' />
+            ) : (
+              'Đăng nhập'
+            )}
           </Button>
         </Box>
 

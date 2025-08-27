@@ -7,6 +7,7 @@ import {
 } from 'react';
 import type User from '../interfaces/User';
 import { mockUser } from '../assets/mockData';
+import bcrypt from 'bcryptjs';
 
 interface RegisterData {
   id?: string;
@@ -38,9 +39,13 @@ interface AuthContextType {
     password: string;
   }) => Promise<Response | undefined>;
   register: (userData: RegisterData) => Promise<Response | undefined>;
+  confirmUser: (password: string) => Promise<Response | undefined>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => Promise<Response | undefined>;
-  changePassword: (oldPassword: string, newPassword: string) => void;
+  changePassword: (
+    oldPassword: string,
+    newPassword: string
+  ) => Promise<Response | undefined>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,10 +75,14 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     try {
       const user = mockUser.find(user => user.phone === userData.phone);
       if (user) {
-        const isCorrectPassword = user.password === userData.password;
+        const isCorrectPassword = await bcrypt.compare(
+          userData.password,
+          user.password || ''
+        );
         if (isCorrectPassword) {
+          const { password, ...userWithoutPassword } = user;
           setUser(user);
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
           return {
             success: true,
@@ -114,6 +123,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }
 
         const userId: string = crypto.randomUUID();
+        const hashPassword = await bcrypt.hash(userData.password, 12);
+        userData.password = hashPassword;
         mockUser.push({ ...userData, id: userId });
 
         return {
@@ -132,6 +143,46 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       return {
         success: false,
         message: 'Đã xảy ra lỗi khi đăng ký',
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Xác thực người dùng
+  const confirmUser = async (
+    password: string
+  ): Promise<Response | undefined> => {
+    try {
+      setIsLoading(true);
+      if (!user) {
+        return {
+          success: false,
+          message: 'Không tìm thấy người dùng',
+          errorCode: 'USER_NOT_FOUND',
+        };
+      }
+
+      const isCorrectPassword = await bcrypt.compare(
+        password,
+        user.password || ''
+      );
+      if (isCorrectPassword) {
+        return {
+          success: true,
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Mật khẩu không chính xác',
+          errorCode: 'WRONG_PASSWORD',
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Đã xảy ra lỗi khi xác thực người dùng',
       };
     } finally {
       setIsLoading(false);
@@ -160,17 +211,17 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       }
 
       const updatedUser = { ...user, ...userData };
-      console.log(updatedUser);
-
-        // Update mockUser immutably
-        mockUser = mockUser.map(u => u.id === user.id ? updatedUser : u);
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+      const userIndex = mockUser.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        mockUser[userIndex] = updatedUser;
+        const { password, ...userWithoutPassword } = updatedUser;
+        setUser(userWithoutPassword);
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
         return {
           success: true,
           message: 'Cập nhật thông tin thành công',
-          user: updatedUser,
+          user: userWithoutPassword,
         };
       }
 
@@ -189,7 +240,63 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  const changePassword = (oldPassword: string, newPassword: string): void => {};
+  // Thay đổi mật khẩu
+  const changePassword = async (
+    oldPassword: string,
+    newPassword: string
+  ): Promise<Response | undefined> => {
+    try {
+      setIsLoading(true);
+
+      if (!user) {
+        return {
+          success: false,
+          message: 'Không tìm thấy người dùng',
+          errorCode: 'USER_NOT_FOUND',
+        };
+      }
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      const updatedUser = { ...user, password: hashedPassword };
+      const userIndex = mockUser.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        const isCorrectPassword = await bcrypt.compare(
+          oldPassword,
+          mockUser[userIndex].password || ''
+        );
+        if (isCorrectPassword) {
+          mockUser[userIndex] = updatedUser;
+          const { password, ...userWithoutPassword } = updatedUser;
+          setUser(userWithoutPassword);
+          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+
+          return {
+            success: true,
+            message: 'Thay đổi mật khẩu thành công',
+            user: userWithoutPassword,
+          };
+        } else {
+          return {
+            success: false,
+            message: 'Mật khẩu không chính xác',
+            errorCode: 'WRONG_PASSWORD',
+          };
+        }
+      }
+
+      return {
+        message: 'Thay đổi mật khẩu thất bại',
+        success: false,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: 'Thay đổi mật khẩu thất bại',
+        success: false,
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -199,6 +306,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         isLoading,
         login,
         register,
+        confirmUser,
         logout,
         updateUser,
         changePassword,

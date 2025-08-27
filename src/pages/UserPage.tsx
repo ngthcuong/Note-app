@@ -115,7 +115,6 @@ const UserPage: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     try {
       const response = await updateUser(data);
-      console.log(response);
 
       if (response?.success) {
         setIsEditing(false);
@@ -189,7 +188,7 @@ const UserPage: React.FC = () => {
             }}
           >
             {/* Họ tên */}
-            <Grid size={{ sm: 12, md: 12 }}>
+            <Grid size={{ xs: 12, md: 12 }}>
               <Controller
                 control={control}
                 name='fullName'
@@ -218,7 +217,7 @@ const UserPage: React.FC = () => {
             </Grid>
 
             {/* Số điện thoại */}
-            <Grid size={{ sm: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 control={control}
                 name='phone'
@@ -247,7 +246,7 @@ const UserPage: React.FC = () => {
             </Grid>
 
             {/* Email */}
-            <Grid size={{ sm: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 control={control}
                 name='email'
@@ -276,7 +275,7 @@ const UserPage: React.FC = () => {
             </Grid>
 
             {/* Giới tính */}
-            <Grid size={{ sm: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 control={control}
                 name='gender'
@@ -313,7 +312,7 @@ const UserPage: React.FC = () => {
             </Grid>
 
             {/* Ngày sinh */}
-            <Grid size={{ sm: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 control={control}
                 name='dob'
