@@ -39,6 +39,7 @@ interface AuthContextType {
     password: string;
   }) => Promise<Response | undefined>;
   register: (userData: RegisterData) => Promise<Response | undefined>;
+  confirmUser: (password: string) => Promise<Response | undefined>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => Promise<Response | undefined>;
   changePassword: (
@@ -148,6 +149,50 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
+  // Xác thực người dùng
+  const confirmUser = async (
+    password: string
+  ): Promise<Response | undefined> => {
+    try {
+      setIsLoading(true);
+      if (!user) {
+        return {
+          success: false,
+          message: 'Không tìm thấy người dùng',
+          errorCode: 'USER_NOT_FOUND',
+        };
+      }
+
+      const isCorrectPassword = await bcrypt.compare(
+        password,
+        user.password || ''
+      );
+      if (isCorrectPassword) {
+        const { password, ...userWithoutPassword } = user;
+        setUser(user);
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+
+        return {
+          success: true,
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Mật khẩu không chính xác',
+          errorCode: 'WRONG_PASSWORD',
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Đã xảy ra lỗi khi xác thực người dùng',
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Đăng xuất
   const logout = (): void => {
     localStorage.removeItem('user');
@@ -199,6 +244,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
+  // Thay đổi mật khẩu
   const changePassword = async (
     oldPassword: string,
     newPassword: string
@@ -264,6 +310,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         isLoading,
         login,
         register,
+        confirmUser,
         logout,
         updateUser,
         changePassword,
