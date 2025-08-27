@@ -227,9 +227,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
 
-      return {
-        message: 'Thay đổi mật khẩu thất bại',
-        success: true,
+        success: false,
       };
     } catch (error) {
       console.error(error);
