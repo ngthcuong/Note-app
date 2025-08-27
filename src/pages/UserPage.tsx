@@ -313,6 +313,12 @@ const UserPage: React.FC = () => {
                       label='Ngày sinh'
                       className='w-full'
                       disabled={!isEditing}
+                      value={
+                        field.value instanceof Date
+                          ? field.value.toISOString().split('T')[0]
+                          : field.value
+                      }
+                      onChange={e => field.onChange(new Date(e.target.value))}
                       slotProps={{
                         input: {
                           startAdornment: (
@@ -350,7 +356,7 @@ const UserPage: React.FC = () => {
                 variant='contained'
                 type='submit'
                 disabled={isSubmitting}
-                onClick={() => handleSubmit(onSubmit)}
+                // onClick={() => handleSubmit(onSubmit)}
                 className='bg-gradient-to-r from-green-600 to-emerald-600 py-3 hover:from-green-700 hover:to-emerald-700'
                 sx={{
                   borderRadius: 2,
