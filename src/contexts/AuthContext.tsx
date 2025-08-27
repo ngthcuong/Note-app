@@ -154,8 +154,16 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     password: string
   ): Promise<Response | undefined> => {
     try {
-      setIsLoading(true);
       if (!user) {
+        return {
+          success: false,
+          message: 'Không tìm thấy người dùng',
+          errorCode: 'USER_NOT_FOUND',
+        };
+      }
+
+      const userWithPassword = mockUser.find(u => u.id === user.id);
+      if (!userWithPassword) {
         return {
           success: false,
           message: 'Không tìm thấy người dùng',
@@ -165,8 +173,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       const isCorrectPassword = await bcrypt.compare(
         password,
-        user.password || ''
+        userWithPassword.password || ''
       );
+
       if (isCorrectPassword) {
         return {
           success: true,
@@ -184,8 +193,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         success: false,
         message: 'Đã xảy ra lỗi khi xác thực người dùng',
       };
-    } finally {
-      setIsLoading(false);
     }
   };
 
