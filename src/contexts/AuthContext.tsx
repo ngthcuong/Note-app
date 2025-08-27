@@ -7,6 +7,7 @@ import {
 } from 'react';
 import type User from '../interfaces/User';
 import { mockUser } from '../assets/mockData';
+import bcrypt from 'bcryptjs';
 
 interface RegisterData {
   id?: string;
@@ -73,10 +74,14 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     try {
       const user = mockUser.find(user => user.phone === userData.phone);
       if (user) {
-        const isCorrectPassword = user.password === userData.password;
+        const isCorrectPassword = await bcrypt.compare(
+          userData.password,
+          user.password || ''
+        );
         if (isCorrectPassword) {
+          const { password, ...userWithoutPassword } = user;
           setUser(user);
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
           return {
             success: true,
@@ -117,6 +122,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }
 
         const userId: string = crypto.randomUUID();
+        const hashPassword = await bcrypt.hash(userData.password, 12);
+        userData.password = hashPassword;
         mockUser.push({ ...userData, id: userId });
 
         return {
@@ -166,13 +173,14 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       const userIndex = mockUser.findIndex(u => u.id === user.id);
       if (userIndex !== -1) {
         mockUser[userIndex] = updatedUser;
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        const { password, ...userWithoutPassword } = updatedUser;
+        setUser(userWithoutPassword);
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
         return {
           success: true,
           message: 'Cập nhật thông tin thành công',
-          user: updatedUser,
+          user: userWithoutPassword,
         };
       }
 
@@ -209,15 +217,20 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       const updatedUser = { ...user, password: newPassword };
       const userIndex = mockUser.findIndex(u => u.id === user.id);
       if (userIndex !== -1) {
-        if (user.password === oldPassword) {
+        const isCorrectPassword = await bcrypt.compare(
+          oldPassword,
+          user.password || ''
+        );
+        if (isCorrectPassword) {
           mockUser[userIndex] = updatedUser;
-          setUser(updatedUser);
-          localStorage.setItem('user', JSON.stringify(updatedUser));
+          const { password, ...userWithoutPassword } = updatedUser;
+          setUser(userWithoutPassword);
+          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
           return {
             success: true,
             message: 'Thay đổi mật khẩu thành công',
-            user: updatedUser,
+            user: userWithoutPassword,
           };
         } else {
           return {
