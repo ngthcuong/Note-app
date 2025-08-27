@@ -24,7 +24,6 @@ import {
 import ModalChangePassword from '../components/ModalChangePassword';
 import { openSnackbar } from '../redux/slices/snackBarSlice';
 import { useAuth } from '../contexts/AuthContext';
-import ModalConfirm from '../components/ModalConfirm';
 
 interface FormData {
   id?: string;
@@ -55,9 +54,7 @@ const UserPage: React.FC = () => {
   const { user, updateUser } = useAuth();
 
   const [isShowModal, setIsShowModal] = useState<boolean>(false);
-  const [isShowModalConfirm, setIsShowModalConfirm] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [updateData, setUpdateData] = useState<FormData | null>(null);
 
   const formData = yup.object({
     fullName: yup
@@ -115,80 +112,21 @@ const UserPage: React.FC = () => {
     setIsEditing(false);
   };
 
-  // const onSubmit = async (data: FormData) => {
-  //   try {
-  //     const response = await updateUser(data);
-
-  //     if (response?.success) {
-  //       setIsEditing(false);
-  //       dispatch(openSnackbar({ message: 'Cập nhật thông tin thành công' }));
-  //     } else {
-  //       dispatch(
-  //         openSnackbar({ message: response?.message || '', severity: 'error' })
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     dispatch(openSnackbar({ message: 'Cập nhật thông tin thất bại' }));
-  //   }
-  // };
-
   const onSubmit = async (data: FormData) => {
     try {
-      setUpdateData(data);
-      setIsShowModalConfirm(true);
-    } catch (error) {
-      console.error(error);
-      dispatch(
-        openSnackbar({
-          message: 'Có lỗi xảy ra',
-          severity: 'error',
-        })
-      );
-    }
-  };
-
-  const handleConfirmSuccess = async () => {
-    try {
-      if (!updateData) {
-        dispatch(
-          openSnackbar({
-            message: 'Không có dữ liệu để cập nhật',
-            severity: 'error',
-          })
-        );
-        return;
-      }
-
-      const response = await updateUser(updateData);
+      const response = await updateUser(data);
 
       if (response?.success) {
         setIsEditing(false);
-        setIsShowModalConfirm(false);
-        setUpdateData(null);
-
-        dispatch(
-          openSnackbar({
-            message: 'Cập nhật thông tin thành công',
-            severity: 'success',
-          })
-        );
+        dispatch(openSnackbar({ message: 'Cập nhật thông tin thành công' }));
       } else {
         dispatch(
-          openSnackbar({
-            message: response?.message || 'Cập nhật thông tin thất bại',
-            severity: 'error',
-          })
+          openSnackbar({ message: response?.message || '', severity: 'error' })
         );
       }
     } catch (error) {
       console.error(error);
-      dispatch(
-        openSnackbar({
-          message: 'Cập nhật thông tin thất bại',
-          severity: 'error',
-        })
-      );
+      dispatch(openSnackbar({ message: 'Cập nhật thông tin thất bại' }));
     }
   };
 
@@ -450,14 +388,6 @@ const UserPage: React.FC = () => {
         <ModalChangePassword
           open={isShowModal}
           onClose={() => setIsShowModal(!isShowModal)}
-        />
-      )}
-
-      {isShowModalConfirm && (
-        <ModalConfirm
-          open={isShowModalConfirm}
-          onClose={() => setIsShowModalConfirm(!isShowModalConfirm)}
-          onConfirm={handleConfirmSuccess}
         />
       )}
     </Paper>
