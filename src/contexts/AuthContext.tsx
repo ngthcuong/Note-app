@@ -9,12 +9,24 @@ import type User from '../interfaces/User';
 import { mockUser } from '../assets/mockData';
 
 interface RegisterData {
+  id?: string;
   phone: string;
   password: string;
   fullName: string;
   email: string;
   gender: string;
   dob: Date;
+}
+
+interface Response {
+  success: boolean;
+  message?: string;
+  errorCode?:
+    | 'WRONG_PHONE'
+    | 'WRONG_PASSWORD'
+    | 'USER_NOT_FOUND'
+    | 'USER_EXIST';
+  user?: User;
 }
 
 interface AuthContextType {
@@ -24,17 +36,11 @@ interface AuthContextType {
   login: (userData: {
     phone: string;
     password: string;
-  }) => Promise<ResponseLogin | undefined>;
-  register: (userData: RegisterData) => void;
+  }) => Promise<Response | undefined>;
+  register: (userData: RegisterData) => Promise<Response | undefined>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
   changePassword: (oldPassword: string, newPassword: string) => void;
-}
-
-interface ResponseLogin {
-  success: boolean;
-  message?: string;
-  errorCode?: 'WRONG_PHONE' | 'WRONG_PASSWORD' | 'USER_NOT_FOUND';
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,7 +66,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const login = async (userData: {
     phone: string;
     password: string;
-  }): Promise<ResponseLogin | undefined> => {
+  }): Promise<Response | undefined> => {
     try {
       const user = mockUser.find(user => user.phone === userData.phone);
       if (user) {
@@ -92,7 +98,45 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   // Đăng ký
-  const register = (userData: RegisterData): void => {};
+  const register = async (
+    userData: RegisterData
+  ): Promise<Response | undefined> => {
+    try {
+      setIsLoading(true);
+      if (userData) {
+        const isExist = mockUser.find(user => userData.phone === user.phone);
+        if (isExist) {
+          return {
+            success: false,
+            message: 'Số điện thoại này đã được đăng ký',
+            errorCode: 'USER_EXIST',
+          };
+        }
+
+        const userId: string = crypto.randomUUID();
+        mockUser.push({ ...userData, id: userId });
+
+        return {
+          success: true,
+          message: 'Đăng ký tài khoản thành công',
+          user: { ...userData, id: userId },
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Không thể đăng ký tài khoản',
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Đã xảy ra lỗi khi đăng ký',
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Đăng xuất
   const logout = (): void => {
