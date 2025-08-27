@@ -7,6 +7,7 @@ import AppLayout from '../layouts/AppLayout';
 import RootLayout from '../layouts/RootLayout';
 import AuthLayout from '../layouts/AuthLayout';
 import UserPage from '../pages/UserPage';
+import RegisterPage from '../pages/RegisterPage';
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
           {
             path: '/login',
             element: <LoginPage />,
+          },
+          {
+            path: '/register',
+            element: <RegisterPage />,
           },
         ],
       },
