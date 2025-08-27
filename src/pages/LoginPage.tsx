@@ -10,6 +10,7 @@ import {
   Paper,
   Divider,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import {
   Visibility,
@@ -249,6 +250,11 @@ const LoginPage: React.FC = () => {
             size='large'
             disabled={isSubmitting}
             startIcon={<Login />}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleSubmit(onSubmit)();
+              }
+            }}
             className='bg-gradient-to-r from-blue-600 to-indigo-600 py-3 hover:from-blue-700 hover:to-indigo-700'
             sx={{
               borderRadius: 2,
@@ -257,7 +263,11 @@ const LoginPage: React.FC = () => {
               fontWeight: 600,
             }}
           >
-            {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {isSubmitting ? (
+              <CircularProgress size={30} className='!text-white' />
+            ) : (
+              'Đăng nhập'
+            )}
           </Button>
         </Box>
 
