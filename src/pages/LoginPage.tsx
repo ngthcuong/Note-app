@@ -143,6 +143,11 @@ const LoginPage: React.FC = () => {
           component='form'
           onSubmit={handleSubmit(onSubmit)}
           className='flex flex-col gap-3'
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              handleSubmit(onSubmit)();
+            }
+          }}
         >
           <Box
             sx={{
@@ -250,11 +255,6 @@ const LoginPage: React.FC = () => {
             size='large'
             disabled={isSubmitting}
             startIcon={<Login />}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                handleSubmit(onSubmit)();
-              }
-            }}
             className='bg-gradient-to-r from-blue-600 to-indigo-600 py-3 hover:from-blue-700 hover:to-indigo-700'
             sx={{
               borderRadius: 2,

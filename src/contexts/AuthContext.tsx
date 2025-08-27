@@ -213,13 +213,13 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           errorCode: 'USER_NOT_FOUND',
         };
       }
-
-      const updatedUser = { ...user, password: newPassword };
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      const updatedUser = { ...user, password: hashedPassword };
       const userIndex = mockUser.findIndex(u => u.id === user.id);
       if (userIndex !== -1) {
         const isCorrectPassword = await bcrypt.compare(
           oldPassword,
-          user.password || ''
+          mockUser[userIndex].password || ''
         );
         if (isCorrectPassword) {
           mockUser[userIndex] = updatedUser;
