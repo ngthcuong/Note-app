@@ -108,7 +108,7 @@ const RegisterPage: React.FC = () => {
     confirmPassword: yup
       .string()
       .required('Vui lòng nhập lại mật khẩu')
-      .oneOf([yup.ref('newPassword')], 'Mật khẩu không khớp'),
+      .oneOf([yup.ref('password')], 'Mật khẩu không khớp'),
   });
 
   const {
@@ -156,7 +156,7 @@ const RegisterPage: React.FC = () => {
       //     }
       //   }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Register error:', error);
 
       dispatch(
         openSnackbar({
@@ -421,7 +421,7 @@ const RegisterPage: React.FC = () => {
                                 setShowConfirmPassword(!showConfirmPassword)
                               }
                             >
-                              {showPassword ? (
+                              {showConfirmPassword ? (
                                 <Visibility className='text-gray-500' />
                               ) : (
                                 <VisibilityOff className='text-gray-500' />
