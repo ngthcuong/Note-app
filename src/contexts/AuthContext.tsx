@@ -162,12 +162,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       const updatedUser = { ...user, ...userData };
       console.log(updatedUser);
 
-      const userIndex = mockUser.findIndex(u => u.id === user.id);
-
-      console.log(userIndex);
-
-      if (userIndex !== -1) {
-        mockUser[userIndex] = updatedUser;
+        // Update mockUser immutably
+        mockUser = mockUser.map(u => u.id === user.id ? updatedUser : u);
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
