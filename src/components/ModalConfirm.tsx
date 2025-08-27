@@ -69,7 +69,7 @@ const ModalConfirm = ({
         }
       }
     } catch (error) {
-      console.error('Error changing password:', error);
+      console.error('Error confirming password:', error);
     }
   };
 
