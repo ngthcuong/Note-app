@@ -223,10 +223,13 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           return {
             success: false,
             message: 'Mật khẩu không chính xác',
+            errorCode: 'WRONG_PASSWORD',
           };
         }
       }
 
+      return {
+        message: 'Thay đổi mật khẩu thất bại',
         success: false,
       };
     } catch (error) {
