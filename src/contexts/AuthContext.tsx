@@ -39,7 +39,7 @@ interface AuthContextType {
   }) => Promise<Response | undefined>;
   register: (userData: RegisterData) => Promise<Response | undefined>;
   logout: () => void;
-  updateUser: (userData: Partial<User>) => void;
+  updateUser: (userData: Partial<User>) => Promise<Response | undefined>;
   changePassword: (oldPassword: string, newPassword: string) => void;
 }
 
@@ -145,7 +145,49 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   // Cập nhật thông tin user
-  const updateUser = (userData: Partial<User>): void => {};
+  const updateUser = async (
+    userData: Partial<User>
+  ): Promise<Response | undefined> => {
+    try {
+      setIsLoading(true);
+
+      if (!user) {
+        return {
+          success: false,
+          message: 'Không tìm thấy người dùng',
+          errorCode: 'USER_NOT_FOUND',
+        };
+      }
+
+      const updatedUser = { ...user, ...userData };
+      console.log(updatedUser);
+
+        // Update mockUser immutably
+        mockUser = mockUser.map(u => u.id === user.id ? updatedUser : u);
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+
+        return {
+          success: true,
+          message: 'Cập nhật thông tin thành công',
+          user: updatedUser,
+        };
+      }
+
+      return {
+        success: false,
+        message: 'Không thể cập nhật thông tin',
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: 'Đã xảy ra lỗi khi cập nhật thông tin',
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const changePassword = (oldPassword: string, newPassword: string): void => {};
 

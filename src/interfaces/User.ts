@@ -1,6 +1,6 @@
 export default interface User {
   id: string;
-  phone: string;
+  readonly phone: string;
   password: string;
   fullName: string;
   dob: Date;

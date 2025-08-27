@@ -51,7 +51,7 @@ const gender = [
 
 const UserPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [isShowModal, setIsShowModal] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -113,9 +113,22 @@ const UserPage: React.FC = () => {
   };
 
   const onSubmit = async (data: FormData) => {
-    console.log(data);
-    setIsEditing(false);
-    dispatch(openSnackbar({ message: 'Cập nhật thông tin thành công' }));
+    try {
+      const response = await updateUser(data);
+      console.log(response);
+
+      if (response?.success) {
+        setIsEditing(false);
+        dispatch(openSnackbar({ message: 'Cập nhật thông tin thành công' }));
+      } else {
+        dispatch(
+          openSnackbar({ message: response?.message || '', severity: 'error' })
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      dispatch(openSnackbar({ message: 'Cập nhật thông tin thất bại' }));
+    }
   };
 
   return (
@@ -217,7 +230,7 @@ const UserPage: React.FC = () => {
                       placeholder='Nhập số điện thoại của bạn'
                       label='Số điện thoại'
                       className='w-full'
-                      disabled={!isEditing}
+                      disabled={true}
                       slotProps={{
                         input: {
                           startAdornment: (
