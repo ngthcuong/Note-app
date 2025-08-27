@@ -4,7 +4,6 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
-import Header from './Header';
 import { useAppDispatch } from '../hooks';
 import { openSnackbar } from '../redux/slices/snackBarSlice';
 import type { Note } from '../interfaces/Note';
@@ -100,10 +99,17 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onDelete }) => {
   };
 
   return (
-    <div className='mx-auto mt-12 flex min-h-screen w-full max-w-sm flex-col items-center px-4 sm:max-w-md sm:px-6 md:mt-16 md:max-w-lg md:px-8 lg:mt-24 lg:max-w-2xl lg:px-0'>
-      <Header
-        title={mode === 'create' ? 'Tạo ghi chú mới' : 'Chỉnh sửa ghi chú'}
-      />
+    <div className='mx-auto flex w-full max-w-sm flex-col items-center rounded-2xl border px-4 py-10 sm:max-w-md sm:px-6 md:max-w-lg md:px-8 lg:max-w-7xl lg:px-0'>
+      {/* <Typography
+        variant='h4'
+        sx={{
+          fontWeight: 600,
+          textAlign: 'center',
+          flex: 1,
+        }}
+      >
+        {mode === 'create' ? 'Tạo ghi chú mới' : 'Chỉnh sửa ghi chú'}
+      </Typography> */}
 
       <div className='mt-4 w-full rounded-2xl border p-4 shadow-2xl sm:max-w-md md:max-w-lg lg:max-w-2xl'>
         <div>

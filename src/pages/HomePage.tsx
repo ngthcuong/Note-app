@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
   const [layout, setLayout] = useState<string>('column');
 
   const handleViewNote = (id: string) => {
-    navigate(`/view-note/${id}`);
+    navigate(`/notes/${id}`);
   };
 
   const handleSearchNote = (keyword: string) => {
@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
   }, [keyword, notes]);
 
   return (
-    <div className='m-auto mt-4 max-w-7xl rounded-2xl border p-2 sm:p-4 lg:p-6'>
+    <div className='m-auto flex h-[calc(100vh-60px)] max-w-7xl flex-col rounded-2xl border p-2 sm:p-4 lg:p-6'>
       {/* Tiêu đề */}
       <div className='text-center text-xl font-extrabold sm:text-3xl'>
         Danh sách các ghi chú
@@ -112,14 +112,11 @@ const HomePage: React.FC = () => {
 
       {/* Danh sách ghi chú */}
       <div
-        className={classNames(
-          'mt-3 h-[calc(100vh-12rem)] gap-4 overflow-y-auto',
-          {
-            'flex flex-col': layout === 'column',
-            'grid auto-rows-max grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4':
-              layout === 'grid',
-          }
-        )}
+        className={classNames('mt-3 flex-1 gap-4 overflow-y-auto', {
+          'flex flex-col': layout === 'column',
+          'grid auto-rows-max grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4':
+            layout === 'grid',
+        })}
       >
         {filteredNotes.length === 0 && !keyword && (
           <div className='col-span-full flex h-full min-h-[300px] items-center justify-center text-center'>

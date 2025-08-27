@@ -6,6 +6,7 @@ import ViewNotePage from '../pages/ViewNotePage';
 import AppLayout from '../layouts/AppLayout';
 import RootLayout from '../layouts/RootLayout';
 import AuthLayout from '../layouts/AuthLayout';
+import UserPage from '../pages/UserPage';
 
 const router = createBrowserRouter([
   {
@@ -23,8 +24,12 @@ const router = createBrowserRouter([
             element: <CreateNotePage />,
           },
           {
-            path: '/view-note/:id',
+            path: '/notes/:id',
             element: <ViewNotePage />,
+          },
+          {
+            path: '/profile',
+            element: <UserPage />,
           },
         ],
       },

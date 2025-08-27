@@ -90,5 +90,8 @@ export const mockUser: User[] = [
     phone: '0373472803',
     password: '123456a!A',
     fullName: 'Nguyen Thanh Cuong',
+    dob: new Date('07-03-2003'),
+    email: 'cuong.nguyent@s3corp.com.vn',
+    gender: 'male',
   },
 ];
