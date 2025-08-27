@@ -8,6 +8,7 @@ import CreateIcon from '@mui/icons-material/Create';
 import EditIcon from '@mui/icons-material/Edit';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import { Logout, Person, PersonPinCircleOutlined } from '@mui/icons-material';
+import { useAuth } from '../contexts/AuthContext';
 
 // Định nghĩa mapping cho các routes
 const routeMapping: Record<string, { label: string; icon?: React.ReactNode }> =
@@ -35,6 +36,7 @@ const routeMapping: Record<string, { label: string; icon?: React.ReactNode }> =
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   // const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -106,6 +108,7 @@ export default function Header() {
       </MenuItem>
       <MenuItem
         onClick={() => {
+          logout();
           navigate('/login');
         }}
       >

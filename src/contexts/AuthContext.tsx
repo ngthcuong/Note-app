@@ -101,7 +101,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const register = (userData: RegisterData): void => {};
 
   // Đăng xuất
-  const logout = (): void => {};
+  const logout = (): void => {
+    localStorage.removeItem('user');
+  };
 
   // Cập nhật thông tin user
   const updateUser = (userData: Partial<User>): void => {};
