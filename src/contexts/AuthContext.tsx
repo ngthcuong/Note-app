@@ -20,6 +20,7 @@ interface RegisterData {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (userData: {
     phone: string;
     password: string;
@@ -39,27 +40,20 @@ interface ResponseLogin {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    try {
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      localStorage.removeItem('user');
+      return null;
+    }
+  });
 
-  // Kiểm tra user đã đăng nhập khi app khởi tạo
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   useEffect(() => {
-    const checkAuthStatus = () => {
-      try {
-        const storedUser = localStorage.getItem('user');
-        // const token = localStorage.getItem('token');
-
-        if (storedUser) {
-          //  if (storedUser && token) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (error) {
-        console.error('Error loading user from localStorage:', error);
-        localStorage.removeItem('user');
-        // localStorage.removeItem('token');
-      }
-    };
-
-    checkAuthStatus();
+    setIsLoading(false);
   }, []);
 
   // Đăng nhập
@@ -103,6 +97,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Đăng xuất
   const logout = (): void => {
     localStorage.removeItem('user');
+    setUser(null);
   };
 
   // Cập nhật thông tin user
@@ -115,6 +110,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         user,
         isAuthenticated: !!user,
+        isLoading,
         login,
         register,
         logout,

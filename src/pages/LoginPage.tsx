@@ -64,8 +64,8 @@ const LoginPage: React.FC = () => {
   } = useForm({
     resolver: yupResolver(formData),
     defaultValues: {
-      phone: '',
-      password: '',
+      phone: '0373472803',
+      password: '123456a!A',
     },
     mode: 'onChange',
   });

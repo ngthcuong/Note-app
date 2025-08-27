@@ -109,7 +109,7 @@ export default function Header() {
       <MenuItem
         onClick={() => {
           logout();
-          navigate('/login');
+          navigate('/login', { replace: true });
         }}
       >
         <Logout sx={{ mr: 1 }} />
