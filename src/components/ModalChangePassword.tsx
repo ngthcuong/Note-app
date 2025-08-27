@@ -14,6 +14,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { useAppDispatch } from '../hooks';
+import { openSnackbar } from '../redux/slices/snackBarSlice';
 
 interface FormData {
   currentPassword: string;
@@ -27,6 +30,8 @@ interface ModalChangePasswordProps {
 }
 
 const ModalChangePassword = ({ open, onClose }: ModalChangePasswordProps) => {
+  const { changePassword } = useAuth();
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -49,6 +54,7 @@ const ModalChangePassword = ({ open, onClose }: ModalChangePasswordProps) => {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { isSubmitting },
     reset,
   } = useForm({
@@ -62,11 +68,40 @@ const ModalChangePassword = ({ open, onClose }: ModalChangePasswordProps) => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.log(data);
-      reset();
-      onClose();
+      const response = await changePassword(
+        data.currentPassword,
+        data.newPassword
+      );
+      if (response?.success) {
+        dispatch(openSnackbar({ message: response.message || '' }));
+        reset();
+        onClose();
+      } else {
+        switch (response?.errorCode) {
+          case 'WRONG_PASSWORD':
+            setError('currentPassword', {
+              type: 'value',
+              message: response.message,
+            });
+            dispatch(
+              openSnackbar({
+                message: response.message || '',
+                severity: 'error',
+              })
+            );
+            break;
+          default:
+            break;
+        }
+      }
     } catch (error) {
       console.error('Error changing password:', error);
+      dispatch(
+        openSnackbar({
+          message: 'Lỗi kết nối. Vui lòng thử lại.',
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -79,7 +114,7 @@ const ModalChangePassword = ({ open, onClose }: ModalChangePasswordProps) => {
       className='rounded-lg'
     >
       <DialogTitle className='flex items-center justify-between bg-blue-50'>
-        <Typography variant='h6' className='font-bold text-blue-700'>
+        <Typography className='!text-2xl font-bold text-blue-700'>
           Thay đổi mật khẩu
         </Typography>
         <IconButton onClick={onClose} size='small'>

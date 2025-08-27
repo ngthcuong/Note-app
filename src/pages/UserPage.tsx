@@ -115,7 +115,6 @@ const UserPage: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     try {
       const response = await updateUser(data);
-      console.log(response);
 
       if (response?.success) {
         setIsEditing(false);

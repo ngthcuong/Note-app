@@ -40,7 +40,10 @@ interface AuthContextType {
   register: (userData: RegisterData) => Promise<Response | undefined>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => Promise<Response | undefined>;
-  changePassword: (oldPassword: string, newPassword: string) => void;
+  changePassword: (
+    oldPassword: string,
+    newPassword: string
+  ) => Promise<Response | undefined>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -160,10 +163,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       }
 
       const updatedUser = { ...user, ...userData };
-      console.log(updatedUser);
-
-        // Update mockUser immutably
-        mockUser = mockUser.map(u => u.id === user.id ? updatedUser : u);
+      const userIndex = mockUser.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        mockUser[userIndex] = updatedUser;
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
@@ -189,7 +191,56 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  const changePassword = (oldPassword: string, newPassword: string): void => {};
+  const changePassword = async (
+    oldPassword: string,
+    newPassword: string
+  ): Promise<Response | undefined> => {
+    try {
+      setIsLoading(true);
+
+      if (!user) {
+        return {
+          success: false,
+          message: 'Không tìm thấy người dùng',
+          errorCode: 'USER_NOT_FOUND',
+        };
+      }
+
+      const updatedUser = { ...user, password: newPassword };
+      const userIndex = mockUser.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        if (user.password === oldPassword) {
+          mockUser[userIndex] = updatedUser;
+          setUser(updatedUser);
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+
+          return {
+            success: true,
+            message: 'Thay đổi mật khẩu thành công',
+            user: updatedUser,
+          };
+        } else {
+          return {
+            success: false,
+            message: 'Mật khẩu không chính xác',
+          };
+        }
+      }
+
+      return {
+        message: 'Thay đổi mật khẩu thất bại',
+        success: true,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: 'Thay đổi mật khẩu thất bại',
+        success: false,
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <AuthContext.Provider
