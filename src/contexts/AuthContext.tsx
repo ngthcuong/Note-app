@@ -169,7 +169,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       );
       if (isCorrectPassword) {
         const { password, ...userWithoutPassword } = user;
-        setUser(user);
+        setUser(userWithoutPassword);
         localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
         return {

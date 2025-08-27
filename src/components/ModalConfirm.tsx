@@ -83,7 +83,7 @@ const ModalConfirm = ({
     >
       <DialogTitle className='flex items-center justify-between bg-blue-50'>
         <Typography className='!text-2xl font-bold text-blue-700'>
-          Thay đổi mật khẩu
+          Xác thực người dùng
         </Typography>
         <IconButton onClick={onClose} size='small'>
           <Close />
