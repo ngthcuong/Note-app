@@ -163,7 +163,7 @@ const RegisterPage: React.FC = () => {
             dispatch(
               openSnackbar({
                 severity: 'error',
-                message: 'Đăng ký tài khoản thấy bại',
+                message: 'Đăng ký tài khoản thất bại',
               })
             );
             break;
