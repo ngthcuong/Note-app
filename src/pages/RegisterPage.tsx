@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   TextField,
   Button,
-  Checkbox,
-  FormControlLabel,
   Typography,
   Box,
   Paper,
@@ -17,7 +15,6 @@ import {
 import {
   Visibility,
   VisibilityOff,
-  Login,
   Google,
   FacebookOutlined,
   Person,
@@ -26,6 +23,7 @@ import {
   PeopleAltOutlined,
   Email,
   Phone,
+  HowToReg,
 } from '@mui/icons-material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -41,10 +39,12 @@ interface FormData {
   dob: Date;
   email: string;
   gender: string;
+  password: string;
 }
 
 const RegisterPage: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { register } = useAuth();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
@@ -114,6 +114,7 @@ const RegisterPage: React.FC = () => {
   const {
     control,
     handleSubmit,
+    setError,
     clearErrors,
     formState: { isSubmitting },
   } = useForm({
@@ -124,6 +125,8 @@ const RegisterPage: React.FC = () => {
       email: '',
       gender: '',
       dob: new Date(),
+      password: '',
+      confirmPassword: '',
     },
     mode: 'onChange',
   });
@@ -131,30 +134,41 @@ const RegisterPage: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     try {
       clearErrors();
-      console.log(data);
+      const response = await register(data);
 
-      //   const response = await register(data);
+      if (response?.success) {
+        dispatch(
+          openSnackbar({
+            message: 'Đăng ký thành công!',
+            severity: 'success',
+          })
+        );
+        navigate('/login');
+      } else {
+        switch (response?.errorCode) {
+          case 'USER_EXIST':
+            setError('phone', {
+              type: 'value',
+              message: response.message,
+            });
+            dispatch(
+              openSnackbar({
+                severity: 'error',
+                message: response.message || '',
+              })
+            );
+            break;
 
-      //   if (response?.success) {
-      //     navigate('/');
-      //   } else {
-      //     switch (response?.errorCode) {
-      //       case 'USER_NOT_FOUND':
-      //         setError('phone', {
-      //           type: 'value',
-      //           message: response.message,
-      //         });
-      //         break;
-      //       case 'WRONG_PASSWORD':
-      //         setError('password', {
-      //           type: 'value',
-      //           message: response.message,
-      //         });
-      //         break;
-      //       default:
-      //         break;
-      //     }
-      //   }
+          default:
+            dispatch(
+              openSnackbar({
+                severity: 'error',
+                message: 'Đăng ký tài khoản thấy bại',
+              })
+            );
+            break;
+        }
+      }
     } catch (error) {
       console.error('Register error:', error);
 
@@ -388,12 +402,8 @@ const RegisterPage: React.FC = () => {
                         },
                       }}
                       error={!!fieldState.error}
+                      helperText={fieldState?.error?.message || ''}
                     />
-                    {fieldState.error && (
-                      <Typography variant='caption' color='error'>
-                        {fieldState.error.message}
-                      </Typography>
-                    )}
                   </div>
                 )}
               />
@@ -431,12 +441,8 @@ const RegisterPage: React.FC = () => {
                         },
                       }}
                       error={!!fieldState.error}
+                      helperText={fieldState?.error?.message || ''}
                     />
-                    {fieldState.error && (
-                      <Typography variant='caption' color='error'>
-                        {fieldState.error.message}
-                      </Typography>
-                    )}
                   </div>
                 )}
               />
@@ -449,6 +455,7 @@ const RegisterPage: React.FC = () => {
               variant='contained'
               type='submit'
               disabled={isSubmitting}
+              startIcon={<HowToReg />}
               className='w-full bg-gradient-to-r from-green-600 to-emerald-600 py-3 hover:from-green-700 hover:to-emerald-700 sm:!mx-30'
               sx={{
                 borderRadius: 2,

@@ -1,1 +1,11 @@
 @import 'tailwindcss';
+
+/* Ẩn icon hiện/ẩn mật khẩu mặc định */
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear {
+  display: none;
+}
+
+input[type='password']::-webkit-textfield-decoration-container {
+  display: none;
+}
