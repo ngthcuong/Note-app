@@ -2,13 +2,14 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 import type React from 'react';
 import type { Note } from '../interfaces/Note';
 import { mockPost, mockUser } from '../assets/mockData';
+import { useAuth } from './AuthContext';
 
 interface NotesContextType {
   notes: Note[];
   addNote: (note: Note) => void;
   updateNote: (id: string, note: Partial<Note>) => void;
   deleteNote: (id: string) => void;
-  getNoteByUserId: (userId: string) => Note[];
+  getNoteByUser: () => Note[];
   getNoteById: (id: string) => Note | undefined;
 }
 
@@ -29,33 +30,55 @@ const useNotes = () => {
 // ReactNote - type cho mọi thứ có thể render trong React
 const NotesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [notes, setNotes] = useState<Note[]>(mockPost);
+  const { user } = useAuth();
 
   const addNote = (note: Note) => {
-    setNotes(prev => [...prev, note]);
+    if (user) {
+      const userIndex = mockUser.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        mockUser[userIndex].notes = [
+          ...(mockUser[userIndex].notes ?? []),
+          note,
+        ];
+      }
+    }
   };
 
   // Partial<T> biến tất cả các properties của type T thành optional (? - có thể có hoặc không)
   // Required<T> ngược lại với Partial
   const updateNote = (id: string, updatedNote: Partial<Note>) => {
-    setNotes(prev =>
-      prev.map(note =>
-        note.id === id
-          ? { ...note, ...updatedNote, updatedAt: new Date() }
-          : note
-      )
-    );
+    const userNotes = getNoteByUser();
+    const noteIndex = userNotes.findIndex(note => note.id === id);
+    if (noteIndex !== -1) {
+      userNotes[noteIndex] = { ...userNotes[noteIndex], ...updatedNote };
+    }
   };
 
   const deleteNote = (id: string) => {
-    setNotes(prev => prev.filter(note => note.id !== id));
+    if (user) {
+      const userIndex = mockUser.findIndex(u => u.id === user.id);
+      if (userIndex !== -1 && mockUser[userIndex].notes) {
+        const noteIndex = mockUser[userIndex].notes!.findIndex(
+          note => note.id === id
+        );
+        if (noteIndex !== -1) {
+          mockUser[userIndex].notes!.splice(noteIndex, 1);
+        }
+      }
+    }
   };
 
-  const getNoteByUserId = (userId: string): Note[] => {
-    return mockUser.find(user => user.id === userId)?.notes || [];
+  const getNoteByUser = (): Note[] => {
+    if (user) {
+      return mockUser.find(u => u.id === user.id)?.notes || [];
+    } else {
+      return [];
+    }
   };
 
   const getNoteById = (id: string) => {
-    return notes.find(note => note.id === id);
+    const userNotes = getNoteByUser();
+    return userNotes.find(note => note.id === id);
   };
 
   return (
@@ -65,7 +88,7 @@ const NotesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         addNote,
         updateNote,
         deleteNote,
-        getNoteByUserId,
+        getNoteByUser,
         getNoteById,
       }}
     >

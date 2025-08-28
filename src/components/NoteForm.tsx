@@ -59,6 +59,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onDelete }) => {
   useEffect(() => {
     if (mode === 'edit' && noteId) {
       const note = getNoteById(noteId);
+
       if (note) {
         reset({
           title: note.title,
