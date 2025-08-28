@@ -93,5 +93,16 @@ export const mockUser: User[] = [
     dob: new Date('07-03-2003'),
     email: 'cuong.nguyent@s3corp.com.vn',
     gender: 'male',
+    notes: mockPost,
+  },
+  {
+    id: '2',
+    phone: '0373472801',
+    password: '$2a$12$Rx3vF739QHkIssIiRBx9zejQnJeQDKFA51tcyUX6R4ub0VfOvkMSG',
+    fullName: 'Phan',
+    dob: new Date('07-03-2003'),
+    email: 'phan@gmail.com',
+    gender: 'male',
+    notes: [],
   },
 ];
