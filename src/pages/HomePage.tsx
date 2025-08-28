@@ -19,8 +19,7 @@ const HomePage: React.FC = () => {
   /**
    * Cách 2: Sử dụng custom hook để gọi các hàm và biến
    */
-  const { deleteNote, getNoteByUser } = useNotes();
-  const notes = getNoteByUser();
+  const { notes, deleteNote } = useNotes();
 
   const [keyword, setKeyword] = useState<string>('');
   const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
