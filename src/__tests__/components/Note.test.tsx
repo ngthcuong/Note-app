@@ -5,9 +5,9 @@ import { NotesProvider } from '../../contexts/NotesContext';
 import NoteCard from '../../components/NoteCard';
 import { Provider } from 'react-redux';
 import { store } from '../../redux/store';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('Note Component', () => {
-  // Tạo dữ liệu giả
   const tempId = crypto.randomUUID();
   const mockProps = {
     id: tempId,
@@ -19,31 +19,36 @@ describe('Note Component', () => {
     updatedAt: new Date(),
   };
 
-  // Tạo hàm giúp render các note
   const renderNoteCard = (props = {}) => {
     return render(
-      <AuthProvider>
-        <NotesProvider>
-          <Provider store={store}>
-            <NoteCard {...mockProps} {...props} />
-          </Provider>
-        </NotesProvider>
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <NotesProvider>
+            <Provider store={store}>
+              <NoteCard {...mockProps} {...props} />
+            </Provider>
+          </NotesProvider>
+        </AuthProvider>
+      </MemoryRouter>
     );
   };
 
   const user = userEvent.setup();
 
-  // Clear mỗi lần chạy
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test('should render note component', () => {
     renderNoteCard();
-
     const note = screen.getByText('note 1');
     expect(note).toBeInTheDocument();
+  });
+
+  test('should render note content', () => {
+    renderNoteCard();
+    const content = screen.getByText('noi dung note 1');
+    expect(content).toBeInTheDocument();
   });
 
   test('should call deleteNote when delete a note', async () => {
@@ -56,13 +61,23 @@ describe('Note Component', () => {
     expect(mockProps.deleteNote).toHaveBeenCalledWith(tempId);
   });
 
-  test('should call viewNote and navigate to page view note when press button Xem chi tiet', async () => {
+  test('should call viewNote and navigate when pressing view detail button', async () => {
     renderNoteCard();
     const viewBtn = screen.getByRole('button', { name: /xem chi tiết/i });
 
     await user.click(viewBtn);
+
     expect(mockProps.viewNote).toHaveBeenCalledTimes(1);
     expect(mockProps.viewNote).toHaveBeenCalledWith(tempId);
-    // expect(window.location.pathname).toContain(`/notes/${tempId}`);
+  });
+
+  test('should handle empty title', () => {
+    renderNoteCard({ title: '' });
+    expect(screen.queryByText('note 1')).not.toBeInTheDocument();
+  });
+
+  test('should handle empty content', () => {
+    renderNoteCard({ content: '' });
+    expect(screen.queryByText('noi dung note 1')).not.toBeInTheDocument();
   });
 });
