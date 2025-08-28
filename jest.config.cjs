@@ -21,8 +21,4 @@ module.exports = {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
-  globals: {
-    TextEncoder: TextEncoder,
-    TextDecoder: TextDecoder,
-  },
 };
