@@ -32,6 +32,7 @@ const HomePage: React.FC = () => {
   const handleSearchNote = (keyword: string) => {
     if (!keyword.trim()) {
       setFilteredNotes(notes);
+      return;
     }
 
     if (keyword.trim()) {

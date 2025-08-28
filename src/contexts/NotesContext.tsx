@@ -1,7 +1,14 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react';
 import type React from 'react';
 import type { Note } from '../interfaces/Note';
-import { mockPost } from '../assets/mockData';
+import { mockPost, mockUser } from '../assets/mockData';
+import { useAuth } from './AuthContext';
 
 interface NotesContextType {
   notes: Note[];
@@ -27,7 +34,15 @@ const useNotes = () => {
 // nhận một prop là children
 // ReactNote - type cho mọi thứ có thể render trong React
 const NotesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [notes, setNotes] = useState<Note[]>(mockPost);
+
+  useEffect(() => {
+    if (user) {
+      const userNotes = mockUser.find(u => u.id === user.id)?.notes || [];
+      setNotes(userNotes);
+    }
+  }, [user]);
 
   const addNote = (note: Note) => {
     setNotes(prev => [...prev, note]);

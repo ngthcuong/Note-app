@@ -1,3 +1,5 @@
+import type { Note } from './Note';
+
 export default interface User {
   id: string;
   readonly phone: string;
@@ -6,4 +8,5 @@ export default interface User {
   dob: Date;
   email: string;
   gender: string;
+  notes?: Note[];
 }
