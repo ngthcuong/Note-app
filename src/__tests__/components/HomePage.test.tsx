@@ -4,7 +4,7 @@ import { AuthProvider } from '../../contexts/AuthContext';
 import { NotesProvider } from '../../contexts/NotesContext';
 import { Provider } from 'react-redux';
 import { store } from '../../redux/store';
-// import userEvent from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import HomePage from '../../pages/HomePage';
 
 // Mock react-router-dom
@@ -57,7 +57,7 @@ const renderHomePage = () => {
   );
 };
 
-// const user = userEvent.setup();
+const user = userEvent.setup();
 
 describe('HomePage Component', () => {
   beforeEach(() => {
@@ -66,11 +66,63 @@ describe('HomePage Component', () => {
 
   test('should render page title', () => {
     renderHomePage();
+
     expect(screen.getByText('Danh sách các ghi chú')).toBeInTheDocument();
   });
 
   test('should render all notes', () => {
     renderHomePage();
+
+    expect(screen.getByText('note 1')).toBeInTheDocument();
+    expect(screen.getByText('note 2')).toBeInTheDocument();
+  });
+
+  test('should navigate to note detail when clicking view button', async () => {
+    renderHomePage();
+    const viewBtn = screen.getAllByRole('button', { name: /xem chi tiết/i });
+
+    await user.click(viewBtn[0]);
+
+    // expect(mockNotes[0].viewNote).toHaveBeenCalledTimes(1);
+    // expect(mockNotes[0].viewNote).toHaveBeenCalledWith(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/notes/1');
+  });
+
+  test('should filter notes by search keyword', async () => {
+    renderHomePage();
+    const searchInput = screen.getByPlaceholderText(
+      'Tìm kiếm ghi chú theo từ khóa ...'
+    );
+
+    await user.type(searchInput, '1');
+
+    const highlightedTexts = screen.getAllByText('1');
+    expect(highlightedTexts.length).toBeGreaterThan(0);
+    expect(screen.queryByText('note 2')).not.toBeInTheDocument();
+  });
+
+  test('should show no results message when search returns empty', async () => {
+    renderHomePage();
+    const searchInput = screen.getByPlaceholderText(
+      'Tìm kiếm ghi chú theo từ khóa ...'
+    );
+
+    await user.type(searchInput, 'jest');
+
+    expect(screen.getByText('Không tìm thấy ghi chú nào')).toBeInTheDocument();
+    expect(screen.getByText(/chứa từ khóa/)).toBeInTheDocument();
+    expect(screen.getByText('jest')).toBeInTheDocument();
+  });
+
+  test('should clear search when keyword is empty', async () => {
+    renderHomePage();
+    const searchInput = screen.getByPlaceholderText(
+      'Tìm kiếm ghi chú theo từ khóa ...'
+    );
+
+    await user.type(searchInput, 'React');
+    await user.clear(searchInput);
+
     expect(screen.getByText('note 1')).toBeInTheDocument();
     expect(screen.getByText('note 2')).toBeInTheDocument();
   });
