@@ -1,13 +1,14 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import type React from 'react';
 import type { Note } from '../interfaces/Note';
-import { mockPost } from '../assets/mockData';
+import { mockPost, mockUser } from '../assets/mockData';
 
 interface NotesContextType {
   notes: Note[];
   addNote: (note: Note) => void;
   updateNote: (id: string, note: Partial<Note>) => void;
   deleteNote: (id: string) => void;
+  getNoteByUserId: (userId: string) => Note[];
   getNoteById: (id: string) => Note | undefined;
 }
 
@@ -49,6 +50,10 @@ const NotesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setNotes(prev => prev.filter(note => note.id !== id));
   };
 
+  const getNoteByUserId = (userId: string): Note[] => {
+    return mockUser.find(user => user.id === userId)?.notes || [];
+  };
+
   const getNoteById = (id: string) => {
     return notes.find(note => note.id === id);
   };
@@ -60,6 +65,7 @@ const NotesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         addNote,
         updateNote,
         deleteNote,
+        getNoteByUserId,
         getNoteById,
       }}
     >

@@ -5,6 +5,7 @@ import { useNotes } from '../contexts/NotesContext';
 import { useEffect, useState } from 'react';
 import type { Note } from '../interfaces/Note';
 import classNames from 'classnames';
+import { useAuth } from '../contexts/AuthContext';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +20,9 @@ const HomePage: React.FC = () => {
   /**
    * Cách 2: Sử dụng custom hook để gọi các hàm và biến
    */
-  const { notes, deleteNote } = useNotes();
+  const { deleteNote, getNoteByUserId } = useNotes();
+  const { user } = useAuth();
+  const notes = getNoteByUserId(user?.id || '');
 
   const [keyword, setKeyword] = useState<string>('');
   const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
