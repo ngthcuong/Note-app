@@ -102,7 +102,12 @@ export default function Header() {
         horizontal: 'right',
       }}
     >
-      <MenuItem onClick={() => navigate('/profile')}>
+      <MenuItem
+        onClick={() => {
+          navigate('/profile');
+          setAnchorEl(null);
+        }}
+      >
         <PersonPinCircleOutlined sx={{ mr: 1 }} />
         Thông tin cá nhân
       </MenuItem>
