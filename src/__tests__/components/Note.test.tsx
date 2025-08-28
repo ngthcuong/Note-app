@@ -32,6 +32,8 @@ describe('Note Component', () => {
     );
   };
 
+  const user = userEvent.setup();
+
   // Clear mỗi lần chạy
   beforeEach(() => {
     jest.clearAllMocks();
@@ -45,13 +47,22 @@ describe('Note Component', () => {
   });
 
   test('should call deleteNote when delete a note', async () => {
-    const user = userEvent.setup();
-
+    renderNoteCard();
     const deleteBtn = screen.getByRole('button', { name: /xóa/i });
 
     await user.click(deleteBtn);
 
     expect(mockProps.deleteNote).toHaveBeenCalledTimes(1);
     expect(mockProps.deleteNote).toHaveBeenCalledWith(tempId);
+  });
+
+  test('should call viewNote and navigate to page view note when press button Xem chi tiet', async () => {
+    renderNoteCard();
+    const viewBtn = screen.getByRole('button', { name: /xem chi tiết/i });
+
+    await user.click(viewBtn);
+    expect(mockProps.viewNote).toHaveBeenCalledTimes(1);
+    expect(mockProps.viewNote).toHaveBeenCalledWith(tempId);
+    // expect(window.location.pathname).toContain(`/notes/${tempId}`);
   });
 });
